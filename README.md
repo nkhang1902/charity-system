@@ -17,5 +17,6 @@ pip install -r requirements.txt
 You can then run the application with the following command:
 
 ```
+docker compose up -d
 python app/app.py
 ```
