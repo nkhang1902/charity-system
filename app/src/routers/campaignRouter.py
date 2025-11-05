@@ -9,7 +9,7 @@ class CampaignRouter:
 
     def _registerRoutes(self):
         self.router.route(
-            "/",
+            "",
             methods=["GET"],
             endpoint="get_campaign_list"
         )(lambda: self.handler.getList())
@@ -21,7 +21,7 @@ class CampaignRouter:
         )(lambda campaignId: self.handler.getById(campaignId))
 
         self.router.route(
-            "/",
+            "",
             methods=["POST"],
             endpoint="create_campaign"
         )(lambda: self.handler.create())

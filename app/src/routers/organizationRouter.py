@@ -9,7 +9,7 @@ class OrganizationRouter:
 
     def _registerRoutes(self):
         self.router.route(
-            "/",
+            "",
             methods=["GET"],
             endpoint="get_organization_list"
         )(lambda: self.handler.getList())
@@ -21,7 +21,7 @@ class OrganizationRouter:
         )(lambda orgId: self.handler.getById(orgId))
 
         self.router.route(
-            "/",
+            "",
             methods=["POST"],
             endpoint="create_organization"
         )(lambda: self.handler.create())
