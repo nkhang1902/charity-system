@@ -12,3 +12,10 @@ You will need to first install `werkzeug`, `boto3` dependencies, as well as all 
 ```
 pip install werkzeug boto3
 pip install -r requirements.txt
+```
+
+You can then run the application with the following command:
+
+```
+python app/app.py
+```
