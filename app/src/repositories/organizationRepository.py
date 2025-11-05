@@ -25,9 +25,6 @@ class OrganizationRepository:
         return Organization(**result[0]) if result else None
 
     def create(self, payload: dict):
-        if not payload:
-            raise ValueError("Payload is empty")
-
         columns = ", ".join(payload.keys())
         placeholders = ", ".join(["%s"] * len(payload))
         values = list(payload.values())
@@ -42,9 +39,6 @@ class OrganizationRepository:
 
 
     def update(self, id: str, payload: dict):
-        if not payload:
-            raise ValueError("Payload is empty")
-
         set_clause = ", ".join([f"{col} = %s" for col in payload.keys()])
         values = list(payload.values())
         values.append(id)

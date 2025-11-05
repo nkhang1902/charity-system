@@ -22,6 +22,9 @@ class OrganizationHandler:
 
     @handle_api_exceptions
     def create(self):
+        if request.headers.get("Content-Type") != "application/json" or request.json is None:
+            raise ApiException(API_ERROR_CODE.BAD_REQUEST, 400)
+
         payload = validatePayload(Organization, request.json)
         if payload is None:
             raise ApiException(API_ERROR_CODE.BAD_REQUEST, 400)
@@ -34,6 +37,9 @@ class OrganizationHandler:
         existedData = self.service.getById(id)
         if existedData is None:
             raise ApiException(API_ERROR_CODE.NOT_FOUND, 404)
+
+        if request.headers.get("Content-Type") != "application/json" or request.json is None:
+            raise ApiException(API_ERROR_CODE.BAD_REQUEST, 400)
 
         payload = validatePayload(Organization, request.json)
         if payload is None:

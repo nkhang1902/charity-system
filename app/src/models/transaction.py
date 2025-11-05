@@ -4,12 +4,12 @@ from datetime import datetime
 
 @dataclass
 class Transaction:
-    id: Optional[int] = None
-    user_id: Optional[int] = None
-    campaign_id: Optional[int] = None
-    amount: Optional[float] = None
+    id: int
+    user_id: int
+    campaign_id: int
+    amount: int
     status: Optional[str] = None
     blockchain_hash: Optional[str] = None
     message: Optional[str] = None
-    receipient: Optional[str] = None
+    receipt_url: Optional[str] = None
     timestamp: Optional[datetime] = None

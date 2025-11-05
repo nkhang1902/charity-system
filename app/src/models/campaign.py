@@ -4,13 +4,12 @@ from datetime import datetime
 
 @dataclass
 class Campaign:
-    id: Optional[int] = None
-    title: Optional[str] = None
-    organization_id: Optional[int] = None
+    id: int
+    title: str
+    org_id: int
     description: Optional[str] = None
-    status: Optional[str] = None
-    goal_ammount: Optional[float] = None
-    current_ammount: Optional[float] = None
+    goal_amount: Optional[float] = None
+    current_amount: Optional[float] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     status: Optional[str] = None

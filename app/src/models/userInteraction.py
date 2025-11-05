@@ -4,10 +4,10 @@ from datetime import datetime
 
 @dataclass
 class UserInteraction:
-    id: Optional[int] = None
-    user_id: Optional[int] = None
-    target_type: Optional[str] = None
-    target_id: Optional[int] = None
-    action_type: Optional[str] = None
+    id: int
+    user_id: int
+    target_type: str
+    target_id: int
+    action_type: str
     weight: Optional[int] = None
     timestamp: Optional[datetime] = None

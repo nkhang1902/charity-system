@@ -4,9 +4,8 @@ from datetime import datetime
 
 @dataclass
 class User:
-    id: Optional[int] = None
-    email: Optional[str] = None
-    name: Optional[str] = None
+    id: int
+    name: str
     avatar_url: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

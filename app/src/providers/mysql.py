@@ -19,6 +19,7 @@ class MySQL:
             )
         except Exception as e:
             print(f"[MySQL] Connection error: {str(e)}")
+            raise e
 
     def _ensure_connection(self):
         if self.connection is None or not self.connection.is_connected():
@@ -34,7 +35,7 @@ class MySQL:
             return result
         except Exception as e:
             print(f"[MySQL] Query error: {str(e)}")
-            return None
+            raise e
 
     def close(self):
         if self.connection and self.connection.is_connected():
