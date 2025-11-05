@@ -1,0 +1,8 @@
+Flask==3.0.3
+boto3
+dotenv
+mysql-connector-python
+pytz
+PyJWT==2.8.0
+serverless-wsgi
+cryptography

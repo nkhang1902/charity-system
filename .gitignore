@@ -1,0 +1,12 @@
+venv
+node_modules
+./data
+**/__pycache__/
+.serverless
+*.env
+*.DS_Store
+.aws-sam
+layer
+layer.zip
+packaged.yaml
+data
