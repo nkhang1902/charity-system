@@ -7,7 +7,7 @@ class OrganizationRepository:
         self.db = db
 
     def getList(self, params: OrganizationQueryParams | None = None) -> list[Organization]:
-        base_query = """
+        query = """
             SELECT *
             FROM organizations
             WHERE deleted_at IS NULL
@@ -16,10 +16,10 @@ class OrganizationRepository:
         values = []
 
         if params:
-            if params.q:
+            if params.q != "":
                 conditions.append("(name LIKE %s OR description LIKE %s OR category LIKE %s)")
-                like_pattern = f"%{params.q}%"
-                values.extend([like_pattern, like_pattern])
+                q = f"%{params.q}%"
+                values.extend([q, q, q])
 
             if params.id:
                 placeholders = ", ".join(["%s"] * len(params.id))
@@ -32,11 +32,11 @@ class OrganizationRepository:
                 values.extend(params.org_id)
 
         if conditions:
-            base_query += " AND " + " AND ".join(conditions)
+            query += " AND " + " AND ".join(conditions)
 
-        base_query += " ORDER BY created_at DESC"
+        query += " ORDER BY created_at DESC"
 
-        result = self.db.executeQuery(base_query, tuple(values))
+        result = self.db.executeQuery(query, tuple(values))
         return [Organization(**item) for item in result]
 
     def getById(self, id: str) -> Organization | None:

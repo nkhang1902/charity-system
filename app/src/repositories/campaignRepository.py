@@ -9,7 +9,7 @@ class CampaignRepository:
         self.db = db
 
     def getList(self, params: CampaignQueryParams | None = None) -> list[Campaign]:
-        base_query = """
+        query = """
             SELECT *
             FROM campaigns
             WHERE deleted_at IS NULL
@@ -18,10 +18,10 @@ class CampaignRepository:
         values = []
 
         if params:
-            if params.q:
+            if params.q != "":
                 conditions.append("(name LIKE %s OR description LIKE %s)")
-                like_pattern = f"%{params.q}%"
-                values.extend([like_pattern, like_pattern])
+                q = f"%{params.q}%"
+                values.extend([q, q, q])
 
             if params.id:
                 placeholders = ", ".join(["%s"] * len(params.id))
@@ -39,11 +39,11 @@ class CampaignRepository:
                 values.extend(params.status)
 
         if conditions:
-            base_query += " AND " + " AND ".join(conditions)
+            query += " AND " + " AND ".join(conditions)
 
-        base_query += " ORDER BY created_at DESC"
+        query += " ORDER BY created_at DESC"
 
-        result = self.db.executeQuery(base_query, tuple(values))
+        result = self.db.executeQuery(query, tuple(values))
         return [Campaign(**item) for item in result]
 
     def getById(self, id: str) -> Campaign | None:
