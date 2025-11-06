@@ -1,7 +1,7 @@
 import jwt
 import datetime
 from typing import Any, Dict
-from src.core.config import settings
+from app.src.core.config import settings
 
 def jwtGenerate(payload: Dict[str, Any]) -> str:
     def convert_datetimes(obj):

@@ -1,10 +1,10 @@
 from flask import request, jsonify, make_response
-from src.utils.handlerWrapper import handle_api_exceptions
-from src.utils.dictValidate import validatePayload
-from src.constants.errorCode import API_ERROR_CODE
-from src.models.exception import ApiException
-from src.models.campaign import Campaign
-from src.services.campaignService import CampaignService
+from app.src.utils.handlerWrapper import handle_api_exceptions
+from app.src.utils.dictValidate import validatePayload
+from app.src.constants.errorCode import API_ERROR_CODE
+from app.src.models.exception import ApiException
+from app.src.models.campaign import Campaign
+from app.src.services.campaignService import CampaignService
 
 class CampaignHandler:
     def __init__(self, campaignService: CampaignService):

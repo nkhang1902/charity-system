@@ -1,5 +1,5 @@
-from src.models.organization import Organization
-from src.providers.mysql import MySQL
+from app.src.models.organization import Organization
+from app.src.providers.mysql import MySQL
 
 class OrganizationRepository:
     def __init__(self, db: MySQL):

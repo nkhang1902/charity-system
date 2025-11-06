@@ -1,6 +1,6 @@
 from dataclasses import is_dataclass, fields, MISSING
 from typing import Type, TypeVar, Dict, Any
-from src.models.exception import ApiException
+from app.src.models.exception import ApiException
 
 T = TypeVar("T")
 

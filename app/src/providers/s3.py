@@ -1,5 +1,5 @@
 import boto3
-from src.core.config import settings
+from app.src.core.config import settings
 
 class S3:
     def __init__(self):

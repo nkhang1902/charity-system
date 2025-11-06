@@ -3,37 +3,36 @@ frameworkVersion: "4"
 
 plugins:
   - serverless-wsgi
-  - serverless-python-requirements
   - serverless-dotenv-plugin
 
 provider:
   name: aws
   runtime: python3.12
   region: ap-southeast-2
-  stage: staging
   memorySize: 512
   timeout: 180
   layers:
-    - arn:aws:lambda:ap-southeast-2:539247469538:layer:DependencyLayer:1
+    - arn:aws:lambda:ap-southeast-2:539247469538:layer:DependencyLayer:2
 
   vpc:
     securityGroupIds:
       - sg-00f218b4fb5bfdd4c
     subnetIds:
-      - subnet-00db13b5b3650fa7e
-      - subnet-047e60a132902a289
+      - subnet-0eb51aec86119b476
+      - subnet-0b88c11b0ced6ee2d
+      - subnet-0b39cd55cc70bdcff
 
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - s3:GetObject
-            - s3:PutObject
-            - s3:ListBucket
-          Resource:
-            - arn:aws:s3:::${env:S3_BUCKET_NAME}
-            - arn:aws:s3:::${env:S3_BUCKET_NAME}/*
+  # iam:
+  #   role:
+  #     statements:
+  #       - Effect: Allow
+  #         Action:
+  #           - s3:GetObject
+  #           - s3:PutObject
+  #           - s3:ListBucket
+  #         Resource:
+  #           - arn:aws:s3:::${env:S3_BUCKET_NAME}
+  #           - arn:aws:s3:::${env:S3_BUCKET_NAME}/*
 
   environment:
     S3_BUCKET_NAME: ${env:S3_BUCKET_NAME}
@@ -48,16 +47,27 @@ provider:
 custom:
   wsgi:
     app: app.app
-    packRequirements: true
+    packRequirements: false
   dotenv:
     path: .env
+
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
+    - .env
+    - tests/**
+    - __pycache__/**
+    - layer/**
+    - layer.zip
+  include:
+    - app/**
 
 functions:
   getOrganizationList:
     handler: app/wsgi_handler.handler
     events:
       - httpApi:
-          apiId: s43b6hqjj6
           method: GET
           path: /organizations
 
@@ -65,6 +75,5 @@ functions:
     handler: app/wsgi_handler.handler
     events:
       - httpApi:
-          apiId: s43b6hqjj6
           method: GET
           path: /campaigns

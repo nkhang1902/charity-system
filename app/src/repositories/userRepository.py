@@ -1,5 +1,5 @@
-from src.models.user import User
-from src.providers.mysql import MySQL
+from app.src.models.user import User
+from app.src.providers.mysql import MySQL
 
 class UserRepository:
     def __init__(self, db: MySQL):

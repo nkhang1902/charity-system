@@ -1,5 +1,5 @@
-from src.repositories.organizationRepository import OrganizationRepository
-from src.models.organization import Organization
+from app.src.repositories.organizationRepository import OrganizationRepository
+from app.src.models.organization import Organization
 
 class OrganizationService:
     def __init__(self, organizationRepository: OrganizationRepository):

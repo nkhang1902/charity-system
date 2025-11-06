@@ -1,5 +1,5 @@
 from flask import Blueprint
-from src.handlers.organizationHandler import OrganizationHandler
+from app.src.handlers.organizationHandler import OrganizationHandler
 
 class OrganizationRouter:
     def __init__(self, handler: OrganizationHandler):

@@ -1,5 +1,5 @@
-from src.repositories.campaignRepository import CampaignRepository
-from src.models.campaign import Campaign
+from app.src.repositories.campaignRepository import CampaignRepository
+from app.src.models.campaign import Campaign
 
 class CampaignService:
     def __init__(self, campaignRepository: CampaignRepository):

@@ -1,5 +1,5 @@
 from flask import Blueprint
-from src.handlers.campaignHandler import CampaignHandler
+from app.src.handlers.campaignHandler import CampaignHandler
 
 class CampaignRouter:
     def __init__(self, handler: CampaignHandler):

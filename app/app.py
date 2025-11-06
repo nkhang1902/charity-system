@@ -1,22 +1,22 @@
 from flask import Flask, make_response, jsonify
 
-from src.providers.s3 import S3
-from src.providers.mysql import MySQL
+from app.src.providers.s3 import S3
+from app.src.providers.mysql import MySQL
 
-from src.models.exception import ApiException
-from src.constants.errorCode import API_ERROR_CODE
+from app.src.models.exception import ApiException
+from app.src.constants.errorCode import API_ERROR_CODE
 
-from src.repositories.organizationRepository import OrganizationRepository
-from src.repositories.campaignRepository import CampaignRepository
+from app.src.repositories.organizationRepository import OrganizationRepository
+from app.src.repositories.campaignRepository import CampaignRepository
 
-from src.services.organizationService import OrganizationService
-from src.services.campaignService import CampaignService
+from app.src.services.organizationService import OrganizationService
+from app.src.services.campaignService import CampaignService
 
-from src.handlers.campaignHandler import CampaignHandler
-from src.handlers.organizationHandler import OrganizationHandler
+from app.src.handlers.campaignHandler import CampaignHandler
+from app.src.handlers.organizationHandler import OrganizationHandler
 
-from src.routers.campaignRouter import CampaignRouter
-from src.routers.organizationRouter import OrganizationRouter
+from app.src.routers.campaignRouter import CampaignRouter
+from app.src.routers.organizationRouter import OrganizationRouter
 
 app = Flask(__name__)
 

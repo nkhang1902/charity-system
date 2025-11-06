@@ -2,8 +2,8 @@ import traceback
 
 from flask import make_response, jsonify
 from functools import wraps
-from src.models.exception import ApiException
-from src.constants.errorCode import API_ERROR_CODE
+from app.src.models.exception import ApiException
+from app.src.constants.errorCode import API_ERROR_CODE
 
 def handle_api_exceptions(func):
     @wraps(func)

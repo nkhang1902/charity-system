@@ -1,7 +1,7 @@
-from src.models.campaign import Campaign
-from src.models.exception import ApiException
-from src.constants.errorCode import API_ERROR_CODE
-from src.providers.mysql import MySQL
+from app.src.models.campaign import Campaign
+from app.src.models.exception import ApiException
+from app.src.constants.errorCode import API_ERROR_CODE
+from app.src.providers.mysql import MySQL
 
 class CampaignRepository:
     def __init__(self, db: MySQL):

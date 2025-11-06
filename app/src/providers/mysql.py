@@ -1,4 +1,4 @@
-from src.core.config import settings
+from app.src.core.config import settings
 import mysql.connector
 
 class MySQL:

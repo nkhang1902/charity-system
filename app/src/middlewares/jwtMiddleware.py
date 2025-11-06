@@ -1,9 +1,9 @@
 from flask import request, g
-from src.models.exception import ApiException
-from src.constants.errorCode import API_ERROR_CODE
-from src.services.userService import UserService
+from app.src.models.exception import ApiException
+from app.src.constants.errorCode import API_ERROR_CODE
+from app.src.services.userService import UserService
 import jwt
-from src.core.config import settings
+from app.src.core.config import settings
 
 class JwtMiddleware:
     def __init__(self, userService: UserService):
