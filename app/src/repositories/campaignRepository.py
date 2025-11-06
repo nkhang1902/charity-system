@@ -18,7 +18,7 @@ class CampaignRepository:
         values = []
 
         if params:
-            if params.q != "":
+            if params.q != None and params.q != "":
                 conditions.append("(name LIKE %s OR description LIKE %s)")
                 q = f"%{params.q}%"
                 values.extend([q, q, q])

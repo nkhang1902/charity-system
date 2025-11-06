@@ -16,7 +16,7 @@ class OrganizationRepository:
         values = []
 
         if params:
-            if params.q != "":
+            if params.q != None and params.q != "":
                 conditions.append("(name LIKE %s OR description LIKE %s OR category LIKE %s)")
                 q = f"%{params.q}%"
                 values.extend([q, q, q])
