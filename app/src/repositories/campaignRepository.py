@@ -1,7 +1,5 @@
 from app.src.models.campaign import Campaign
 from app.src.models.campaign import CampaignQueryParams
-from app.src.models.exception import ApiException
-from app.src.constants.errorCode import API_ERROR_CODE
 from app.src.providers.mysql import MySQL
 
 class CampaignRepository:
@@ -19,9 +17,9 @@ class CampaignRepository:
 
         if params:
             if params.q != None and params.q != "":
-                conditions.append("(name LIKE %s OR description LIKE %s)")
+                conditions.append("(description LIKE %s)")
                 q = f"%{params.q}%"
-                values.extend([q, q])
+                values.extend([q])
 
             if params.id:
                 placeholders = ", ".join(["%s"] * len(params.id))
