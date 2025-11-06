@@ -14,14 +14,14 @@ pip install werkzeug boto3
 pip install -r requirements.txt
 ```
 
-Build layer command
+Build layer command (for deploying only):
 ```
 PYTHON_VERSION="3.12"; LAYER_DIR="layer"; LAYER_PATH="$LAYER_DIR/python/lib/python${PYTHON_VERSION}/site-packages"; ZIP_NAME="layer.zip"; mkdir -p $LAYER_PATH && pip install --platform manylinux2014_x86_64 --implementation cp --only-binary=:all: --upgrade --target=$LAYER_PATH -r requirements.txt && cd $LAYER_DIR && zip -r ../$ZIP_NAME python > /dev/null && cd .. && echo "Layer zip created: $ZIP_NAME"
 ```
 
-You can then run the application with the following command:
+You can run Flask application with the following command:
 
 ```
 docker compose up -d
-python app/app.py
+python -m app.app
 ```

@@ -77,3 +77,10 @@ functions:
       - httpApi:
           method: GET
           path: /campaigns
+
+  fallback:
+    handler: app/wsgi_handler.handler
+    events:
+      - httpApi:
+          method: ANY
+          path: /{proxy+}
