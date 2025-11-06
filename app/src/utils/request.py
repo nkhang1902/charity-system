@@ -30,3 +30,9 @@ def validatePayload(model: Type[T], payload: Dict[str, Any]) -> Dict[str, Any]:
         raise ApiException("Invalid payload", 400)
 
     return filtered
+
+def splitArg(args: Dict[str, str], name: str):
+    val = args.get(name)
+    if not val:
+        return None
+    return [v.strip() for v in val.split(",") if v.strip()]

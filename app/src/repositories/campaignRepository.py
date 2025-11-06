@@ -1,4 +1,5 @@
 from app.src.models.campaign import Campaign
+from app.src.models.campaign import CampaignQueryParams
 from app.src.models.exception import ApiException
 from app.src.constants.errorCode import API_ERROR_CODE
 from app.src.providers.mysql import MySQL
@@ -7,13 +8,42 @@ class CampaignRepository:
     def __init__(self, db: MySQL):
         self.db = db
 
-    def getList(self) -> list[Campaign]:
-        query = """
+    def getList(self, params: CampaignQueryParams | None = None) -> list[Campaign]:
+        base_query = """
             SELECT *
             FROM campaigns
             WHERE deleted_at IS NULL
         """
-        result = self.db.executeQuery(query)
+        conditions = []
+        values = []
+
+        if params:
+            if params.q:
+                conditions.append("(name LIKE %s OR description LIKE %s)")
+                like_pattern = f"%{params.q}%"
+                values.extend([like_pattern, like_pattern])
+
+            if params.id:
+                placeholders = ", ".join(["%s"] * len(params.id))
+                conditions.append(f"id IN ({placeholders})")
+                values.extend(params.id)
+
+            if params.org_id:
+                placeholders = ", ".join(["%s"] * len(params.org_id))
+                conditions.append(f"org_id IN ({placeholders})")
+                values.extend(params.org_id)
+
+            if params.status:
+                placeholders = ", ".join(["%s"] * len(params.status))
+                conditions.append(f"status IN ({placeholders})")
+                values.extend(params.status)
+
+        if conditions:
+            base_query += " AND " + " AND ".join(conditions)
+
+        base_query += " ORDER BY created_at DESC"
+
+        result = self.db.executeQuery(base_query, tuple(values))
         return [Campaign(**item) for item in result]
 
     def getById(self, id: str) -> Campaign | None:

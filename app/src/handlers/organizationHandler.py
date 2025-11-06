@@ -1,9 +1,10 @@
 from flask import request, jsonify, make_response
 from app.src.utils.handlerWrapper import handle_api_exceptions
-from app.src.utils.dictValidate import validatePayload
+from app.src.utils.request import validatePayload, splitArg
 from app.src.constants.errorCode import API_ERROR_CODE
 from app.src.models.exception import ApiException
 from app.src.models.organization import Organization
+from app.src.models.organization import OrganizationQueryParams
 from app.src.services.organizationService import OrganizationService
 
 class OrganizationHandler:
@@ -12,8 +13,14 @@ class OrganizationHandler:
 
     @handle_api_exceptions
     def getList(self):
-        data = self.service.getList()
-        return make_response(jsonify(data), 200)
+        args = request.args
+        params = OrganizationQueryParams(
+            q=args.get("q"),
+            id=splitArg(args, "id"),
+            category=splitArg(args, "category")
+        )
+        data = self.service.getList(params)
+        return make_response([item.viewDict() for item in data], 200)
 
     @handle_api_exceptions
     def getById(self, id):

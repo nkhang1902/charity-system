@@ -1,5 +1,6 @@
 from app.src.repositories.campaignRepository import CampaignRepository
 from app.src.models.campaign import Campaign
+from app.src.models.campaign import CampaignQueryParams
 
 class CampaignService:
     def __init__(self, campaignRepository: CampaignRepository):
@@ -8,8 +9,8 @@ class CampaignService:
     def getById(self, id: str) -> Campaign | None:
         return self.campaignRepo.getById(id)
 
-    def getList(self) -> list[Campaign]:
-        return self.campaignRepo.getList()
+    def getList(self, params: CampaignQueryParams | None = None) -> list[Campaign]:
+        return self.campaignRepo.getList(params)
 
     def create(self, payload: dict):
         return self.campaignRepo.create(payload)
