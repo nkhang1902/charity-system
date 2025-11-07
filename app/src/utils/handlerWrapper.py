@@ -14,7 +14,6 @@ def handle_api_exceptions(func):
             return ex.to_response()
         except Exception as ex:
             print(f"Error in {func.__name__}: {str(ex)}")
-            print(traceback.format_exc())
             return make_response(
                 jsonify({"error": API_ERROR_CODE.INTERNAL_SERVER_ERROR}),
                 500

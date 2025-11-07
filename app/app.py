@@ -8,15 +8,19 @@ from app.src.constants.errorCode import API_ERROR_CODE
 
 from app.src.repositories.organizationRepository import OrganizationRepository
 from app.src.repositories.campaignRepository import CampaignRepository
+from app.src.repositories.transactionRepository import TransactionRepository
 
 from app.src.services.organizationService import OrganizationService
 from app.src.services.campaignService import CampaignService
+from app.src.services.transactionService import TransactionService
 
 from app.src.handlers.campaignHandler import CampaignHandler
 from app.src.handlers.organizationHandler import OrganizationHandler
+from app.src.handlers.transactionHandler import TransactionHandler
 
 from app.src.routers.campaignRouter import CampaignRouter
 from app.src.routers.organizationRouter import OrganizationRouter
+from app.src.routers.transactionRouter import TransactionRouter
 
 app = Flask(__name__)
 
@@ -29,11 +33,16 @@ organizationService = OrganizationService(organizationRepository)
 campaignRepository = CampaignRepository(db)
 campaignService = CampaignService(campaignRepository)
 
+transactionRepository = TransactionRepository(db)
+transactionService = TransactionService(transactionRepository)
+
 organizationHandler = OrganizationHandler(organizationService)
 campaignHandler = CampaignHandler(campaignService)
+transactionHandler = TransactionHandler(transactionService)
 
 organizationRouter = OrganizationRouter(organizationHandler)
 campaignRouter = CampaignRouter(campaignHandler)
+transactionRouter = TransactionRouter(transactionHandler)
 
 app.register_blueprint(
     organizationRouter.getRouter(),
@@ -43,6 +52,11 @@ app.register_blueprint(
 app.register_blueprint(
     campaignRouter.getRouter(),
     url_prefix="/campaigns"
+)
+
+app.register_blueprint(
+    transactionRouter.getRouter(),
+    url_prefix="/transactions"
 )
 
 # @app.before_request

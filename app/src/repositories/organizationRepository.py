@@ -71,7 +71,7 @@ class OrganizationRepository:
         query = f"""
             UPDATE organizations
             SET {set_clause}, updated_at = NOW()
-            WHERE id = %s
+            WHERE id = %s AND deleted_at IS NULL
         """
 
         result = self.db.executeQuery(query, tuple(values))

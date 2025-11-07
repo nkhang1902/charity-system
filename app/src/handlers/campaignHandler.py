@@ -20,14 +20,15 @@ class CampaignHandler:
             org_id=splitArg(args, "org_id"),
             status=splitArg(args, "status")
         )
-        print(params)
         data = self.service.getList(params)
         return make_response([item.viewDict() for item in data], 200)
 
     @handle_api_exceptions
     def getById(self, id):
         data = self.service.getById(id)
-        return make_response(jsonify(data), 200)
+        if data is None:
+            raise ApiException(API_ERROR_CODE.NOT_FOUND, 404)
+        return make_response(data.viewDict(), 200)
 
     @handle_api_exceptions
     def create(self):

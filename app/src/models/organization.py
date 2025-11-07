@@ -18,9 +18,18 @@ class Organization:
     deleted_at: Optional[datetime] = None
 
     def viewDict(self):
-        fields = ["id", "name", "description", "logo_url", "website_url", "contact_email", "category", "rating", "vote_count", "created_at"]
-        data = asdict(self)
-        return {k: data[k] for k in fields if k in data}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "logo_url": self.logo_url,
+            "website_url": self.website_url,
+            "contact_email": self.contact_email,
+            "category": self.category,
+            "rating": self.rating,
+            "vote_count": self.vote_count,
+            "created_at": self.created_at
+        }
 
 @dataclass
 class OrganizationQueryParams:
