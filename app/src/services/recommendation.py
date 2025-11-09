@@ -6,18 +6,18 @@ class RecommendationService:
     def __init__(self):
         model_path = os.path.join(
             os.path.dirname(__file__),
-            "..", "model", "lightfm_model.pkl"
+            "..", "resource", "lightfm_model.pkl"
         )
 
         if os.path.exists(model_path):
             try:
                 self.model = joblib.load(model_path)
-                print(f" Loaded model from {model_path}")
+                print(f" Loaded resource from {model_path}")
             except Exception as e:
-                print(f" Failed to load model: {e}")
+                print(f" Failed to load resource: {e}")
                 self.model = None
         else:
-            print(" No pretrained model found, using random scorer.")
+            print(" No pretrained resource found, using random scorer.")
             self.model = None
 
     def getRecommendedCampaigns(self, user_id: int, campaigns: list[dict]):
