@@ -66,3 +66,22 @@ class CampaignHandler:
 
         self.service.delete(orgId)
         return make_response({"success": True}, 200)
+
+    @handle_api_exceptions
+    def getRecommendedCampaigns(self, user_id: int):
+        if not user_id:
+            raise ApiException(API_ERROR_CODE.BAD_REQUEST, 400, "Missing user_id")
+
+        args = request.args
+        params = CampaignQueryParams(
+            q=args.get("q"),
+            id=splitArg(args, "id"),
+            org_id=splitArg(args, "org_id"),
+            status=splitArg(args, "status"),
+        )
+
+        data = self.service.getRecommendedCampaigns(user_id, params)
+        return make_response({
+            "user_id": user_id,
+            "recommendations": data
+        }, 200)

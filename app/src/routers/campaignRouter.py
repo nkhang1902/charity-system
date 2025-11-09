@@ -4,7 +4,7 @@ from app.src.handlers.campaignHandler import CampaignHandler
 class CampaignRouter:
     def __init__(self, handler: CampaignHandler):
         self.handler = handler
-        self.router = Blueprint("campaign", __name__)
+        self.router = Blueprint("campaigns", __name__)
         self._registerRoutes()
 
     def _registerRoutes(self):
@@ -37,6 +37,10 @@ class CampaignRouter:
             methods=["DELETE"],
             endpoint="delete_campaign"
         )(lambda campaignId: self.handler.delete(campaignId))
+
+        @self.router.route("/<user_id>/recommendations", methods=["GET"], endpoint="get_recommended_campaigns")
+        def get_recommended_campaigns(user_id):
+            return self.handler.getRecommendedCampaigns(user_id)
 
     def getRouter(self):
         return self.router
