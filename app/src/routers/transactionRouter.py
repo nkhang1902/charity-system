@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from app.src.handlers.transactionHandler import TransactionHandler
+from app.src.models.createTransaction import CreateTransaction
 
 class TransactionRouter:
     def __init__(self, handler: TransactionHandler):

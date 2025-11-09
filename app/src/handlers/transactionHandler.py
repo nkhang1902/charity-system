@@ -35,7 +35,9 @@ class TransactionHandler:
 
     @handle_api_exceptions
     def createTransaction(self, payload: CreateTransaction):
-        data = self.service.createTransaction(vars(payload))
-        if data is None:
-            raise ApiException(API_ERROR_CODE.INTERNAL_ERROR, 500)
+        tx = self.service.createTransaction(vars(payload))
+
+        if tx is None:
+            raise ApiException(API_ERROR_CODE.INTERNAL_SERVER_ERROR, 500)
+
         return make_response(tx.viewDict(), 201)
