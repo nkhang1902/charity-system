@@ -38,7 +38,7 @@ class CampaignRouter:
             endpoint="delete_campaign"
         )(lambda campaignId: self.handler.delete(campaignId))
 
-        @self.router.route("/<user_id>/recommendations", methods=["GET"], endpoint="get_recommended_campaigns")
+        @self.router.route("/recommendations/<user_id>", methods=["GET"], endpoint="get_recommended_campaigns")
         def get_recommended_campaigns(user_id):
             return self.handler.getRecommendedCampaigns(user_id)
 
