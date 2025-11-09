@@ -1,10 +1,10 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from app.src.handlers.transactionHandler import TransactionHandler
 
 class TransactionRouter:
     def __init__(self, handler: TransactionHandler):
         self.handler = handler
-        self.router = Blueprint("transaction", __name__)
+        self.router = Blueprint("transactions", __name__)
         self._registerRoutes()
 
     def _registerRoutes(self):
@@ -19,6 +19,12 @@ class TransactionRouter:
             methods=["GET"],
             endpoint="get_transaction_by_id"
         )(lambda id: self.handler.getById(id))
+
+        @self.router.route("", methods=["POST"], endpoint="create_transaction")
+        def create_transaction():
+            data = request.get_json()
+            payload = CreateTransaction(**data)
+            return self.handler.createTransaction(payload)
 
     def getRouter(self):
         return self.router

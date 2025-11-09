@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 from datetime import datetime
+from app.src.constants.transactionStatus import TransactionStatus
 
 @dataclass
 class Transaction:
@@ -8,7 +9,7 @@ class Transaction:
     user_id: int
     campaign_id: int
     amount: int
-    status: Optional[str] = None
+    status: TransactionStatus = TransactionStatus.NEW
     blockchain_hash: Optional[str] = None
     message: Optional[str] = None
     receipt_url: Optional[str] = None

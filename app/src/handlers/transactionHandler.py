@@ -5,6 +5,7 @@ from app.src.models.transaction import TransactionQueryParams
 from app.src.constants.errorCode import API_ERROR_CODE
 from app.src.models.exception import ApiException
 from app.src.services.transactionService import TransactionService
+from app.src.models.createTransaction import CreateTransaction
 
 class TransactionHandler:
     def __init__(self, TransactionService: TransactionService):
@@ -31,3 +32,10 @@ class TransactionHandler:
         if data is None:
             raise ApiException(API_ERROR_CODE.NOT_FOUND, 404)
         return make_response(data.viewDict(), 200)
+
+    @handle_api_exceptions
+    def createTransaction(self, payload: CreateTransaction):
+        data = self.service.createTransaction(vars(payload))
+        if data is None:
+            raise ApiException(API_ERROR_CODE.INTERNAL_ERROR, 500)
+        return make_response(tx.viewDict(), 201)
