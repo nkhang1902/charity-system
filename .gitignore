@@ -1,12 +1,23 @@
-venv
-node_modules
-./data
-**/__pycache__/
-.serverless
+# Virtual environments
+venv/
+.venv/
+
+# Node modules
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment and OS files
 *.env
-*.DS_Store
-.aws-sam
-layer
-layer.zip
-packaged.yaml
-data
+.DS_Store
+
+# Build / distribution
+build/
+dist/
+data/
+app/src/model/
+
+# IDE
+.idea/

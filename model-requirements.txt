@@ -1,0 +1,8 @@
+Flask==3.0.3
+dotenv
+pytz
+serverless-wsgi
+cryptography
+numpy
+scipy
+joblib
