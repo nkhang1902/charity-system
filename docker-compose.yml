@@ -29,6 +29,19 @@ services:
     networks:
       - charity_network
 
+  lightfm:
+    image: bthzang/lightfm-model:latest
+    container_name: lightfm
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./resource/lightfm_model.pkl:/app/resource/lightfm_model.pkl
+    networks:
+      - charity_network
+
 volumes:
   mysql_data:
 

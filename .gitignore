@@ -17,7 +17,7 @@ __pycache__/
 build/
 dist/
 data/
-app/src/model/
+app/src/resource/
 
 # IDE
 .idea/

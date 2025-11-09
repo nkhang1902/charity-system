@@ -74,9 +74,14 @@ class TransactionRepository:
             VALUES ({placeholders})
         """
 
-        result = self.db.executeQuery(query, tuple(values))
-        return result
+        cursor = self.db.connection.cursor()
+        cursor.execute(query, tuple(values))
+        self.db.connection.commit()
 
+        last_id = cursor.lastrowid
+        cursor.close()
+
+        return last_id
 
     def update(self, id: str, payload: dict):
         set_clause = ", ".join([f"{col} = %s" for col in payload.keys()])
@@ -85,7 +90,7 @@ class TransactionRepository:
 
         query = f"""
             UPDATE transactions
-            SET {set_clause}, updated_at = NOW()
+            SET {set_clause}
             WHERE id = %s
         """
 

@@ -6,3 +6,4 @@ pytz
 PyJWT==2.8.0
 serverless-wsgi
 cryptography
+web3==6.11.3

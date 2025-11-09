@@ -1,24 +1,10 @@
 import os
+import requests
 import numpy as np
-import joblib
 
 class RecommendationService:
     def __init__(self):
-        model_path = os.path.join(
-            os.path.dirname(__file__),
-            "..", "model", "lightfm_model.pkl"
-        )
-
-        if os.path.exists(model_path):
-            try:
-                self.model = joblib.load(model_path)
-                print(f" Loaded model from {model_path}")
-            except Exception as e:
-                print(f" Failed to load model: {e}")
-                self.model = None
-        else:
-            print(" No pretrained model found, using random scorer.")
-            self.model = None
+        self.model_service_url = os.getenv("MODEL_SERVICE_URL", "http://lightfm:8000")
 
     def getRecommendedCampaigns(self, user_id: int, campaigns: list[dict]):
         if not campaigns:
@@ -26,14 +12,23 @@ class RecommendationService:
 
         campaign_ids = [c["id"] for c in campaigns]
 
-        if self.model is not None:
-            try:
-                scores = np.random.rand(len(campaign_ids))  # fake tạm
-            except Exception:
-                scores = np.random.rand(len(campaign_ids))
-        else:
-            scores = np.random.rand(len(campaign_ids))
+        try:
+            response = requests.post(
+                f"{self.model_service_url}/recommend",
+                json={"user_id": user_id, "item_ids": campaign_ids},
+                timeout=5
+            )
+            if response.status_code == 200:
+                data = response.json()
+                rec_ids = data.get("recommendations", [])
+                ranked = [c for id_ in rec_ids for c in campaigns if c["id"] == id_]
+                return ranked
+            else:
+                print(f"Model service returned {response.status_code}: {response.text}")
+        except Exception as e:
+            print(f"Error calling model service: {e}")
 
+        scores = np.random.rand(len(campaigns))
         ranked = sorted(
             [{**c, "score": float(s)} for c, s in zip(campaigns, scores)],
             key=lambda x: x["score"],

@@ -5,11 +5,11 @@ from app.src.constants.transactionStatus import TransactionStatus
 
 @dataclass
 class Transaction:
-    id: int
     user_id: int
     campaign_id: int
     amount: int
     status: TransactionStatus = TransactionStatus.NEW
+    id: Optional[int] = None
     blockchain_hash: Optional[str] = None
     message: Optional[str] = None
     receipt_url: Optional[str] = None
@@ -35,3 +35,4 @@ class TransactionQueryParams:
     max_amount: Optional[int]
     from_timestamp: Optional[datetime]
     to_timestamp: Optional[datetime]
+    timestamp: Optional[datetime] = None
