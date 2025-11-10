@@ -7,12 +7,12 @@ plugins:
 
 provider:
   name: aws
-  runtime: python3.12
+  runtime: python3.13
   region: ap-southeast-2
   memorySize: 512
   timeout: 180
   layers:
-    - arn:aws:lambda:ap-southeast-2:539247469538:layer:DependencyLayer:6
+    - arn:aws:lambda:ap-southeast-2:539247469538:layer:DependencyLayer:7
 
   vpc:
     securityGroupIds:

@@ -2,9 +2,6 @@ Flask==3.0.3
 boto3
 dotenv
 mysql-connector-python
-pytz
-PyJWT==2.8.0
 serverless-wsgi
-cryptography
 web3==7.14.0
 requests
