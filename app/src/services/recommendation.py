@@ -1,6 +1,6 @@
 import os
 import requests
-import numpy as np
+import random
 
 class RecommendationService:
     def __init__(self):
@@ -28,7 +28,7 @@ class RecommendationService:
         except Exception as e:
             print(f"Error calling model service: {e}")
 
-        scores = np.random.rand(len(campaigns))
+        scores = [random.random() for _ in range(len(campaigns))]
         ranked = sorted(
             [{**c, "score": float(s)} for c, s in zip(campaigns, scores)],
             key=lambda x: x["score"],

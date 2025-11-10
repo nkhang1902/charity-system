@@ -4,6 +4,9 @@ venv/
 
 # Node modules
 node_modules/
+.serverless
+layer
+layer.zip
 
 # Python cache
 __pycache__/
