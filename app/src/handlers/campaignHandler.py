@@ -4,6 +4,7 @@ from app.src.utils.request import validatePayload, splitArg
 from app.src.constants.errorCode import API_ERROR_CODE
 from app.src.models.exception import ApiException
 from app.src.models.campaign import Campaign
+from app.src.models.updateCampaign import UpdateCampaign
 from app.src.models.campaign import CampaignQueryParams
 from app.src.services.campaignService import CampaignService
 
@@ -51,7 +52,7 @@ class CampaignHandler:
         if request.headers.get("Content-Type") != "application/json" or request.json is None:
             raise ApiException(API_ERROR_CODE.BAD_REQUEST, 400)
 
-        payload = validatePayload(Campaign, request.json)
+        payload = validatePayload(UpdateCampaign, request.json)
         if payload is None:
             raise ApiException(API_ERROR_CODE.BAD_REQUEST, 400)
 

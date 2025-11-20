@@ -89,5 +89,5 @@ class CampaignRepository:
             SET deleted_at = NOW()
             WHERE id = %s AND deleted_at IS NULL
         """
-        result = self.db.executeQuery(query, (id))
+        result = self.db.executeQuery(query, (id,))
         return result
