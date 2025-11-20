@@ -55,7 +55,7 @@ class TransactionService:
 
     def createNewTransaction(self, payload: dict) -> Transaction:
         tx_data = {
-            "user_id": payload.get("user_id"),  # <-- đảm bảo có
+            "user_id": payload.get("user_id"),
             "campaign_id": payload["campaign_id"],
             "amount": payload["amount"],
             "status": TransactionStatus.NEW,

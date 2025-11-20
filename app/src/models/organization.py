@@ -1,6 +1,7 @@
 from dataclasses import dataclass, asdict
 from typing import Optional
 from datetime import datetime
+from app.src.constants.organizationCategory import OrganizationCategory
 
 @dataclass
 class Organization:
@@ -10,7 +11,7 @@ class Organization:
     logo_url: Optional[str] = None
     website_url: Optional[str] = None
     contact_email: Optional[str] = None
-    category: Optional[str] = None
+    category: Optional[OrganizationCategory] = None
     rating: Optional[float] = None
     vote_count: Optional[int] = None
     created_at: Optional[datetime] = None
