@@ -17,7 +17,7 @@ class TransactionRepository:
                        c.description AS campaign_description
                 FROM transactions t
                          LEFT JOIN users u ON u.id = t.user_id
-                         LEFT JOIN campaigns c ON c.id = t.campaign_id \
+                         LEFT JOIN campaigns c ON c.id = t.campaign_id
                 """
         conditions = []
         values = []
@@ -25,41 +25,41 @@ class TransactionRepository:
         if params:
             if params.user_id:
                 placeholders = ", ".join(["%s"] * len(params.user_id))
-                conditions.append(f"user_id IN ({placeholders})")
+                conditions.append(f"t.user_id IN ({placeholders})")
                 values.extend(params.user_id)
 
             if params.campaign_id:
                 placeholders = ", ".join(["%s"] * len(params.campaign_id))
-                conditions.append(f"campaign_id IN ({placeholders})")
+                conditions.append(f"t.campaign_id IN ({placeholders})")
                 values.extend(params.campaign_id)
 
             if params.status:
                 placeholders = ", ".join(["%s"] * len(params.status))
-                conditions.append(f"status IN ({placeholders})")
+                conditions.append(f"t.status IN ({placeholders})")
                 values.extend(params.status)
 
             if params.min_amount:
-                conditions.append("amount >= %s")
+                conditions.append("t.amount >= %s")
                 values.append(params.min_amount)
 
             if params.max_amount:
-                conditions.append("amount <= %s")
+                conditions.append("t.amount <= %s")
                 values.append(params.max_amount)
 
             if params.from_timestamp:
-                conditions.append("timestamp >= %s")
+                conditions.append("t.timestamp >= %s")
                 values.append(params.from_timestamp)
 
             if params.to_timestamp:
-                conditions.append("timestamp <= %s")
+                conditions.append("t.timestamp <= %s")
                 values.append(params.to_timestamp)
 
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
-        query += " ORDER BY timestamp DESC"
+        query += " ORDER BY t.timestamp DESC"
 
-        rows = self.db.executeQuery(query, ())
+        rows = self.db.executeQuery(query, tuple(values))
 
         result = []
         for r in rows:
