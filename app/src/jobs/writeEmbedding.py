@@ -123,7 +123,6 @@ def get_all_embedding_from_dynamodb(entity_type):
         result = []
 
         for item in items:
-            print(item)
             result.append({
                 "target_id": item["target_id"],
                 "embedding": [to_float(v) for v in item["embedding"]],

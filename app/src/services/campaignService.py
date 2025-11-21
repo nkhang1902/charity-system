@@ -50,8 +50,6 @@ class CampaignService:
         target_embeddings = get_all_embedding_from_dynamodb(TargetType.CAMPAIGN)
         user_embedding = self.interactionService.compute_user_embedding(int(user_id), TargetType.CAMPAIGN, target_embeddings)
         print("user_embedding", user_embedding)
-        recommendations = self.interactionService.get_top_k_recommendations(user_embedding, k)
-        ids = [r["target_id"] for r in recommendations]
         if user_embedding != None:
             recommendations = self.interactionService.get_top_k_recommendations(user_embedding, k)
             ids = [r["target_id"] for r in recommendations]
