@@ -82,9 +82,6 @@ class TransactionService:
         return tx
 
     def commitOnChain(self, tx: Transaction):
-        tx_hash = None
-        receipt_url = None
-
         try:
             commitTx = CommitTransaction(
                 user_id=tx.user_id,
