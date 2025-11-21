@@ -35,6 +35,7 @@ class TransactionService:
 
         # Step 1: Create in DB
         tx = self.createNewTransaction(payload)
+        tx.campaign = campaign
 
         # Step 2: Process Core
         tx = self.processCorePayment(tx)
