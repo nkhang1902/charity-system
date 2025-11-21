@@ -96,32 +96,80 @@ CREATE TABLE registrations (
 -- USERS
 INSERT INTO users (name, avatar_url) VALUES
 ('Alice Nguyen', 'https://example.com/avatar/alice.png'),
+('Alice Nguyen', 'https://example.com/avatar/alice.png'),
 ('Bao Tran', 'https://example.com/avatar/bao.png'),
 ('Minh Le', 'https://example.com/avatar/minh.png');
 
--- ORGANIZATIONS
+DELETE FROM organizations;
 INSERT INTO organizations (name, description, logo_url, contact_email, website_url, category, rating, vote_count) VALUES
-('Hope Foundation', 'Supporting children education in rural areas.', 'https://example.com/logo/hope.png', 'contact@hope.org', 'https://hope.org', 'Education', 4.5, 20),
-('Green Earth', 'Environmental protection and reforestation projects.', 'https://example.com/logo/green.png', 'info@greenearth.org', 'https://greenearth.org', 'Environment', 4.8, 35);
+('EduFuture Foundation', 'Non-profit focused on improving education access in rural areas.', 'https://example.com/logo1.png', 'contact@edufuture.org', 'https://edufuture.org', 'Education', 4.7, 120),
+
+('GreenEarth Initiative', 'Environmental organization dedicated to reforestation and climate action.', 'https://example.com/logo2.png', 'hello@greenearth.org', 'https://greenearth.org', 'Environment', 4.9, 300),
+
+('Health4All', 'Provides healthcare access for underprivileged communities.', 'https://example.com/logo3.png', 'support@health4all.org', 'https://health4all.org', 'Health', 4.5, 90),
+
+('Tech4Kids', 'Organization promoting digital literacy and STEM education for kids.', 'https://example.com/logo4.png', 'info@tech4kids.org', 'https://tech4kids.org', 'Education', 4.8, 150),
+
+('CleanWater Project', 'Non-profit bringing clean drinking water to remote communities.', 'https://example.com/logo5.png', 'team@cleanwater.org', 'https://cleanwater.org', 'Environment', 4.6, 100),
+
+('AnimalRescue Asia', 'Rescue and rehabilitation for injured and abandoned animals.', 'https://example.com/logo6.png', 'care@animalrescueasia.org', 'https://animalrescueasia.org', 'Animals', 4.7, 200),
+
+('HopeForWomen', 'Empowerment programs and shelters for women in crisis.', 'https://example.com/logo7.png', 'help@hopeforwomen.org', 'https://hopeforwomen.org', 'Social', 4.8, 180),
+
+('YouthSports United', 'Sports development programs for low-income youth.', 'https://example.com/logo8.png', 'contact@youthsports.org', 'https://youthsports.org', 'Sports', 4.4, 70),
+
+('SeniorCare Connect', 'Improving lives of the elderly with social and medical support.', 'https://example.com/logo9.png', 'hello@seniorcare.org', 'https://seniorcare.org', 'Health', 4.6, 140),
+
+('CommunityBuilders', 'Supports community development, housing, and food programs.', 'https://example.com/logo10.png', 'team@communitybuilders.org', 'https://communitybuilders.org', 'Social', 4.5, 110);
 
 -- CAMPAIGNS
+DELETE FROM campaigns;
 INSERT INTO campaigns (org_id, title, description, goal_amount, current_amount, start_date, end_date, status, media_url) VALUES
-(1, 'Books for Kids', 'Provide 1000 books to rural schools.', 5000.00, 1500.00, '2025-10-01', '2025-12-31', 'active', 'https://example.com/media/books.jpg'),
-(2, 'Plant 10,000 Trees', 'Reforest 50 hectares in the Mekong region.', 10000.00, 4200.00, '2025-09-15', '2025-12-15', 'active', 'https://example.com/media/trees.jpg'),
-(2, 'Clean Rivers Initiative', 'Reduce river pollution through community efforts.', 8000.00, 500.00, '2025-11-01', '2026-01-31', 'draft', 'https://example.com/media/river.jpg');
+(1, 'Rural School Libraries', 'Building libraries for rural primary schools.', 20000, 4500, '2025-01-01', '2025-06-01', 'active', 'https://example.com/c1.jpg'),
+(1, 'Scholarships for Girls', 'Funding 50 scholarships for girls in underserved areas.', 15000, 8000, '2025-02-01', '2025-07-01', 'active', 'https://example.com/c2.jpg'),
+
+(2, 'Reforest 10,000 Trees', 'Planting trees to restore degraded land.', 30000, 12000, '2025-01-15', '2025-05-30', 'active', 'https://example.com/c3.jpg'),
+(2, 'Clean Air Awareness', 'Educational program on reducing air pollution.', 10000, 5000, '2025-03-01', '2025-08-01', 'active', 'https://example.com/c4.jpg'),
+
+(3, 'Mobile Health Clinics', 'Running mobile clinics for remote villages.', 25000, 9000, '2025-01-10', '2025-06-15', 'active', 'https://example.com/c5.jpg'),
+(3, 'Vaccination Drive', 'Supporting vaccinations for 2,000 children.', 18000, 6000, '2025-02-10', '2025-07-10', 'active', 'https://example.com/c6.jpg'),
+
+(4, 'STEM Bootcamps', 'Free STEM bootcamps for low-income students.', 22000, 7000, '2025-01-20', '2025-05-20', 'active', 'https://example.com/c7.jpg'),
+(4, 'Tech Kits for Kids', 'Providing laptops and coding kits to students.', 17000, 6500, '2025-03-05', '2025-08-05', 'active', 'https://example.com/c8.jpg'),
+
+(5, 'Village Water Wells', 'Build sustainable water wells in 4 villages.', 28000, 11000, '2025-01-12', '2025-06-12', 'active', 'https://example.com/c9.jpg'),
+(5, 'Sanitation Education', 'Programs teaching sanitation and hygiene.', 9000, 3500, '2025-03-10', '2025-09-10', 'active', 'https://example.com/c10.jpg'),
+
+(6, 'Animal Rescue Vans', 'Buying rescue vans for emergency response.', 20000, 7500, '2025-01-15', '2025-05-15', 'active', 'https://example.com/c11.jpg'),
+(6, 'Stray Dog Medical Fund', 'Medical care for 300 stray dogs.', 12000, 4000, '2025-02-20', '2025-08-20', 'active', 'https://example.com/c12.jpg'),
+
+(7, 'Women Shelter Renovation', 'Renovating two crisis shelters.', 26000, 15000, '2025-01-08', '2025-06-08', 'active', 'https://example.com/c13.jpg'),
+(7, 'Job Training for Women', 'Vocational training for 100 women.', 14000, 6000, '2025-03-12', '2025-08-12', 'active', 'https://example.com/c14.jpg'),
+
+(8, 'Youth Football Kits', 'Providing equipment to youth football teams.', 8000, 2500, '2025-01-25', '2025-06-25', 'active', 'https://example.com/c15.jpg'),
+(8, 'Sports Coaching Program', 'Hiring coaches for long-term youth sports programs.', 15000, 5000, '2025-03-18', '2025-08-18', 'active', 'https://example.com/c16.jpg'),
+
+(9, 'Elderly Care Packages', 'Monthly care packages for 300 seniors.', 13000, 4500, '2025-02-01', '2025-07-01', 'active', 'https://example.com/c17.jpg'),
+(9, 'Home Visits for Seniors', 'Medical home visits to the elderly.', 20000, 9000, '2025-01-20', '2025-06-20', 'active', 'https://example.com/c18.jpg'),
+
+(10, 'Community Food Drive', 'Feeding 1,000 families in need.', 16000, 6000, '2025-02-15', '2025-07-15', 'active', 'https://example.com/c19.jpg'),
+(10, 'Affordable Housing Fund', 'Supporting housing repairs for low-income families.', 30000, 15000, '2025-03-10', '2025-09-10', 'active', 'https://example.com/c20.jpg');
+
+-- USER INTERACTIONS
+DELETE FROM user_interactions;
+INSERT INTO user_interactions (user_id, target_type, target_id, action_type, weight) VALUES
+
+-- User 4: Mixed random
+(4, 'campaign', 4, 'view', 1),
+(4, 'campaign', 10, 'click', 2),
+(4, 'campaign', 15, 'view', 1),
+(4, 'campaign', 19, 'donate', 4);
 
 -- TRANSACTIONS
 INSERT INTO transactions (user_id, campaign_id, amount, status, blockchain_hash, message, receipt_url) VALUES
 (1, 1, 100.00, 'confirmed', '0xabc123', 'Keep up the great work!', 'https://example.com/receipts/tx1.pdf'),
 (2, 1, 250.00, 'confirmed', '0xdef456', 'For the kids!', 'https://example.com/receipts/tx2.pdf'),
 (3, 2, 300.00, 'pending', '0xghi789', 'Let’s make it green.', 'https://example.com/receipts/tx3.pdf');
-
--- USER INTERACTIONS
-INSERT INTO user_interactions (user_id, target_type, target_id, action_type, weight) VALUES
-(1, 'organization', 1, 'view', 1),
-(1, 'campaign', 1, 'donate', 5),
-(2, 'campaign', 2, 'share', 2),
-(3, 'organization', 2, 'click', 1);
 
 -- REGISTRATIONS
 INSERT INTO registrations (org_id, type, payload, status) VALUES

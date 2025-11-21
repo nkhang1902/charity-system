@@ -18,9 +18,11 @@ class InteractionService:
         target_embeddings: dict {target_id: np.array([...])}
         """
         user_interactions = self.interactionRepo.getByUserId(user_id, target_type)
+        print("user_interactions", user_interactions)
         vectors = []
         weights = []
         for inter in user_interactions:
+            print("inter", inter)
             tid = f"{inter["target_type"]}_{inter["target_id"]}"
             w = inter["weight"]
             if tid in target_embeddings:
