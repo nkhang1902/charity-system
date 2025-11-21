@@ -2,6 +2,7 @@ from dataclasses import dataclass, asdict
 from typing import Optional
 from datetime import datetime
 from app.src.models.organization import Organization
+from app.src.constants.campaignStatus import CampaignStatus
 
 @dataclass
 class Campaign:
@@ -13,7 +14,7 @@ class Campaign:
     current_amount: Optional[float] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
-    status: Optional[str] = None
+    status: Optional[CampaignStatus] = None
     media_url: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -25,9 +26,27 @@ class Campaign:
         data = asdict(self)
         return {k: data[k] for k in fields if k in data}
 
+    def toDict(self):
+        allowed = [
+            "id",
+            "title",
+            "org_id",
+            "description",
+            "goal_amount",
+            "current_amount",
+            "start_date",
+            "end_date",
+            "status",
+            "media_url",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+        ]
+
+        return {k: getattr(self, k) for k in allowed}
 @dataclass
 class CampaignQueryParams:
     q: Optional[str]
     id: Optional[list[int]]
     org_id: Optional[list[int]]
-    status: Optional[list[str]]
+    status: Optional[list[CampaignStatus]]
