@@ -6,9 +6,15 @@ from app.src.services.coreClientSerivce import CoreClientSerivce
 from app.src.services.smartContractService import SmartContractService
 from datetime import datetime
 from app.src.constants.transactionStatus import TransactionStatus
+from dotenv import load_dotenv
+import os
+
 
 class TransactionService:
     def __init__(self, transactionRepository: TransactionRepository):
+        load_dotenv()
+
+        self.explorer_tx_prefix: str = os.getenv("EXPLORER_TX_PREFIX")
         self.transactionRepo = transactionRepository
         self.coreClientService = CoreClientSerivce()
         self.smartContractService = SmartContractService()
@@ -20,36 +26,18 @@ class TransactionService:
         return self.transactionRepo.getList(params)
 
     def createTransaction(self, payload: dict) -> Transaction:
-        tx_data = {
-            "user_id": payload["user_id"],
-            "campaign_id": payload["campaign_id"],
-            "amount": payload["amount"],
-            "status": TransactionStatus.NEW,
-            "message": payload.get("message"),
-            "timestamp": datetime.utcnow(),
-        }
+        # Step 1: Create in DB
+        tx = self.createNewTransaction(payload)
 
-        new_id = self.transactionRepo.create(tx_data)
-        tx = Transaction(id=new_id, **tx_data)
-        print(f"Created transaction {tx.id} (status={tx.status})")
+        # Step 2: Process Core
+        tx = self.processCorePayment(tx)
 
-        try:
-            commit_tx = CommitTransaction(
-                user_id=tx.user_id,
-                campaign_id=tx.campaign_id,
-                transaction_id=tx.id,
-                amount=tx.amount,
-                message=tx.message,
-                status=tx.status
-            )
-            print(
-                f"Created transaction {tx.id} (status={tx.status})"
-            )
-            result = commit_tx.execute()
-            print(f"Core transaction successful for tx {tx.id}")
+        # If core failed → stop
+        if tx.status != TransactionStatus.SUCCESS:
+            return tx
 
-        except Exception as e:
-            print(f"Smart contract commit failed for tx {tx.id}: {e}")
+            # Step 3: Commit blockchain
+        tx = self.commitOnChain(tx)
 
         return tx
 
@@ -65,26 +53,33 @@ class TransactionService:
 
         if tx_data["user_id"] is None:
             raise ValueError("user_id is required to create a transaction")
+        try:
+            new_id = self.transactionRepo.create(tx_data)
+            tx = Transaction(id=new_id, **tx_data)
 
-        new_id = self.transactionRepo.create(tx_data)
-        tx = Transaction(id=new_id, **tx_data)
-        print(f"Created transaction {tx.id} (status={tx.status})")
-        return tx
+            print(f"[DB] Created transaction {tx.id} (status={tx.status})")
+            return tx
+        except Exception as e:
+            print("[DB][ERROR] Create failed:", str(e))
+            raise e
 
     def processCorePayment(self, tx: Transaction):
         try:
             result = self.coreClientService.handleTransaction(tx)
+
             if result.get("success"):
-                print(f"Core transaction successful for tx {tx.id}")
                 tx.status = TransactionStatus.SUCCESS
+                print(f"[CORE] Payment Successfully for tx {tx.id}")
             else:
                 tx.status = TransactionStatus.FAILED
-                tx.message = result.get("error", "Core transaction failed")
-                print(f"Core service failed for tx {tx.id}: {tx.message}")
+                print(f"[CORE] Payment FAILED for tx {tx.id}: {tx.message}")
+
         except Exception as e:
             tx.status = TransactionStatus.FAILED
-            tx.message = f"Core error: {e}"
-            print(f"Exception during core payment: {e}")
+            print(f"[CORE] Exception during core payment: {e}")
+
+        self.transactionRepo.update(id=tx.id, payload=tx.viewDict())
+        return tx
 
     def commitOnChain(self, tx: Transaction):
         try:
@@ -93,18 +88,25 @@ class TransactionService:
                 campaign_id=tx.campaign_id,
                 transaction_id=tx.id,
                 amount=tx.amount,
+                status=tx.status,
                 message=tx.message or ""
             )
+            tx_hash = self.smartContractService.commitTransaction(commitTx)
 
-            txHash = self.smartContractService.commitTransaction(commitTx)
+            explorer_prefix = self.explorer_tx_prefix.rstrip("/")
 
             tx.status = TransactionStatus.COMMITTED
-            tx.blockchain_hash = txHash
-            tx.message = f"Committed on-chain: {txHash}"
+            tx.blockchain_hash = tx_hash
+            tx.receipt_url = f"{explorer_prefix}/{tx_hash}"
 
-            print(f"Smart contract committed tx {tx.id}: {txHash}")
+            print(f"[CHAIN] Smart contract committed tx {tx.id}: {tx_hash}")
 
         except Exception as e:
             tx.status = TransactionStatus.UNCOMMITTED
-            tx.message = f"Smart contract error: {e}"
-            print(f"Smart contract commit failed for tx {tx.id}: {e}")
+            tx.message = f"Blockchain error: {e}"
+            print(f"[CHAIN] Commit FAILED for tx {tx.id}: {e}")
+
+        self.transactionRepo.update(
+            id=tx.id, payload=tx.viewDict()
+        )
+        return tx
