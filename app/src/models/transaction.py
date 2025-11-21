@@ -14,6 +14,8 @@ class Transaction:
     message: Optional[str] = None
     receipt_url: Optional[str] = None
     timestamp: Optional[datetime] = None
+    user: Optional[dict] = None
+    campaign: Optional[dict] = None
 
     def viewDict(self):
         return {
@@ -26,6 +28,8 @@ class Transaction:
             "timestamp": self.timestamp,
             "blockchain_hash": self.blockchain_hash,
             "receipt_url": self.receipt_url,
+            "user": self.user.__dict__ if self.user else None,
+            "campaign": self.campaign.viewDict() if self.campaign else None,
         }
 
 @dataclass

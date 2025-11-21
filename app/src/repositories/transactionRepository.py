@@ -1,6 +1,8 @@
 from app.src.models.transaction import Transaction
 from app.src.models.transaction import TransactionQueryParams
 from app.src.providers.mysql import MySQL
+from app.src.models.user import User
+from app.src.models.campaign import Campaign
 
 class TransactionRepository:
     def __init__(self, db: MySQL):
@@ -8,9 +10,15 @@ class TransactionRepository:
 
     def getList(self, params: TransactionQueryParams | None = None) -> list[Transaction]:
         query = """
-            SELECT *
-            FROM transactions
-        """
+                SELECT t.*,
+                       u.name        AS user_name,
+                       u.avatar_url  AS user_avatar_url,
+                       c.title       AS campaign_title,
+                       c.description AS campaign_description
+                FROM transactions t
+                         LEFT JOIN users u ON u.id = t.user_id
+                         LEFT JOIN campaigns c ON c.id = t.campaign_id \
+                """
         conditions = []
         values = []
 
@@ -51,18 +59,68 @@ class TransactionRepository:
 
         query += " ORDER BY timestamp DESC"
 
-        result = self.db.executeQuery(query, tuple(values))
-        return [Transaction(**item) for item in result]
+        rows = self.db.executeQuery(query, ())
 
-    def getById(self, id: str) -> Transaction | None:
+        result = []
+        for r in rows:
+            tx_fields = {k: r[k] for k in Transaction.__annotations__ if k in r}
+            tx = Transaction(**tx_fields)
+
+            tx.user = User(
+                id=r["user_id"],
+                name=r["user_name"],
+                avatar_url=r["user_avatar_url"]
+            )
+
+            tx.campaign = Campaign(
+                id=r["campaign_id"],
+                title=r["campaign_title"],
+                description=r["campaign_description"],
+                org_id=None
+            )
+
+            result.append(tx)
+
+        return result
+
+    def getById(self, id: str):
         query = """
-            SELECT *
-            FROM transactions
-            WHERE id = %s
-            LIMIT 1
-        """
+                SELECT t.*, \
+                       u.id          AS user_id, \
+                       u.name        AS user_name, \
+                       u.avatar_url  AS user_avatar_url, \
+                       c.id          AS campaign_id, \
+                       c.title       AS campaign_title, \
+                       c.description AS campaign_description
+                FROM transactions t
+                         LEFT JOIN users u ON u.id = t.user_id
+                         LEFT JOIN campaigns c ON c.id = t.campaign_id
+                WHERE t.id = %s LIMIT 1 \
+                """
+
         result = self.db.executeQuery(query, (id,))
-        return Transaction(**result[0]) if result else None
+        if not result:
+            return None
+
+        r = result[0]
+
+        tx_fields = {k: r[k] for k in Transaction.__annotations__ if k in r}
+        tx = Transaction(**tx_fields)
+
+        tx.user = User(
+            id=r["user_id"],
+            name=r["user_name"],
+            avatar_url=r["user_avatar_url"]
+        )
+
+        tx.campaign = Campaign(
+            id=r["campaign_id"],
+            title=r["campaign_title"],
+            description=r["campaign_description"],
+            org_id=None
+        )
+
+        return tx
 
     def create(self, payload: dict):
         columns = ", ".join(payload.keys())
