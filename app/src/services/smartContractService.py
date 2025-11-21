@@ -60,7 +60,7 @@ class SmartContractService:
         # Build transaction object
         transaction = function_call.build_transaction({
             "from": self.wallet_address,
-            "nonce": self.web3.eth.get_transaction_count(self.wallet_address),
+            "nonce": self.web3.eth.get_transaction_count(self.wallet_address, "pending"),
             "gas": 350000,
             "gasPrice": self.web3.eth.gas_price,
             "chainId": 11155111  # Sepolia chain ID

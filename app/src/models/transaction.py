@@ -24,10 +24,9 @@ class Transaction:
             "status": self.status,
             "message": self.message,
             "timestamp": self.timestamp,
+            "blockchain_hash": self.blockchain_hash,
+            "receipt_url": self.receipt_url,
         }
-
-    def toDict(self):
-        return self.viewDict()
 
 @dataclass
 class TransactionQueryParams:

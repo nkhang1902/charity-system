@@ -6,9 +6,15 @@ from app.src.services.coreClientSerivce import CoreClientSerivce
 from app.src.services.smartContractService import SmartContractService
 from datetime import datetime
 from app.src.constants.transactionStatus import TransactionStatus
+from dotenv import load_dotenv
+import os
+
 
 class TransactionService:
     def __init__(self, transactionRepository: TransactionRepository):
+        load_dotenv()
+
+        self.explorer_tx_prefix: str = os.getenv("EXPLORER_TX_PREFIX")
         self.transactionRepo = transactionRepository
         self.coreClientService = CoreClientSerivce()
         self.smartContractService = SmartContractService()
@@ -63,22 +69,22 @@ class TransactionService:
 
             if result.get("success"):
                 tx.status = TransactionStatus.SUCCESS
-                tx.message = "Core payment succeeded"
                 print(f"[CORE] Payment Successfully for tx {tx.id}")
             else:
                 tx.status = TransactionStatus.FAILED
-                tx.message = result.get("error", "Core payment failed")
                 print(f"[CORE] Payment FAILED for tx {tx.id}: {tx.message}")
 
         except Exception as e:
             tx.status = TransactionStatus.FAILED
-            tx.message = f"Core error: {e}"
             print(f"[CORE] Exception during core payment: {e}")
 
-        self.transactionRepo.update(id=tx.id, payload=tx.toDict())
+        self.transactionRepo.update(id=tx.id, payload=tx.viewDict())
         return tx
 
     def commitOnChain(self, tx: Transaction):
+        tx_hash = None
+        receipt_url = None
+
         try:
             commitTx = CommitTransaction(
                 user_id=tx.user_id,
@@ -88,12 +94,13 @@ class TransactionService:
                 status=tx.status,
                 message=tx.message or ""
             )
-
             tx_hash = self.smartContractService.commitTransaction(commitTx)
+
+            explorer_prefix = self.explorer_tx_prefix.rstrip("/")
 
             tx.status = TransactionStatus.COMMITTED
             tx.blockchain_hash = tx_hash
-            tx.message = f"Committed on-chain: {tx_hash}"
+            tx.receipt_url = f"{explorer_prefix}/{tx_hash}"
 
             print(f"[CHAIN] Smart contract committed tx {tx.id}: {tx_hash}")
 
@@ -102,10 +109,7 @@ class TransactionService:
             tx.message = f"Blockchain error: {e}"
             print(f"[CHAIN] Commit FAILED for tx {tx.id}: {e}")
 
-        self.transactionRepo.update(id=tx.id, payload={
-                "status": tx.status,
-                "blockchain_hash": blockchain_hash,
-                "receipt_url": receipt_url,
-                "message": tx.message
-            })
+        self.transactionRepo.update(
+            id=tx.id, payload=tx.viewDict()
+        )
         return tx
