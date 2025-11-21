@@ -51,8 +51,10 @@ class CampaignService:
         user_embedding = self.interactionService.compute_user_embedding(int(user_id), TargetType.CAMPAIGN, target_embeddings)
         print("user_embedding", user_embedding)
         if user_embedding != None:
-            recommendations = self.interactionService.get_top_k_recommendations(user_embedding, k)
-            ids = [r["target_id"] for r in recommendations]
+            target_emb_dict = {item["target_id"]: item["embedding"] for item in target_embeddings}
+            recommendations = self.interactionService.get_top_k_recommendations(user_embedding, target_emb_dict, int(k))
+            ids = [r["target_id"].split("_")[1] for r in recommendations]
+            print("recommendations", recommendations)
             return self.campaignRepo.getList(params, ids)
         else:
             return self.campaignRepo.getList(params)
