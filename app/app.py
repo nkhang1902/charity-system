@@ -38,7 +38,7 @@ campaignRepository = CampaignRepository(db)
 campaignService = CampaignService(campaignRepository)
 
 transactionRepository = TransactionRepository(db)
-transactionService = TransactionService(transactionRepository)
+transactionService = TransactionService(transactionRepository, campaignService)
 
 organizationHandler = OrganizationHandler(organizationService)
 campaignHandler = CampaignHandler(campaignService)

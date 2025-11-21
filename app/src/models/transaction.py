@@ -32,6 +32,19 @@ class Transaction:
             "campaign": self.campaign.viewDict() if self.campaign else None,
         }
 
+    def toDict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "campaign_id": self.campaign_id,
+            "amount": self.amount,
+            "status": self.status,
+            "message": self.message,
+            "timestamp": self.timestamp,
+            "blockchain_hash": self.blockchain_hash,
+            "receipt_url": self.receipt_url,
+        }
+
 @dataclass
 class TransactionQueryParams:
     user_id: Optional[list[int]]

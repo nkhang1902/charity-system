@@ -4,17 +4,19 @@ from app.src.models.transaction import TransactionQueryParams
 from app.src.models.commitTransaction import CommitTransaction
 from app.src.services.coreClientSerivce import CoreClientSerivce
 from app.src.services.smartContractService import SmartContractService
+from app.src.services.campaignService import CampaignService
 from datetime import datetime
 from app.src.constants.transactionStatus import TransactionStatus
 from dotenv import load_dotenv
 import os
-
+from app.src.constants.campaignStatus import CampaignStatus
 
 class TransactionService:
-    def __init__(self, transactionRepository: TransactionRepository):
+    def __init__(self, transactionRepository: TransactionRepository, campaignService: CampaignService):
         load_dotenv()
 
         self.explorer_tx_prefix: str = os.getenv("EXPLORER_TX_PREFIX")
+        self.campaignService = campaignService
         self.transactionRepo = transactionRepository
         self.coreClientService = CoreClientSerivce()
         self.smartContractService = SmartContractService()
@@ -26,6 +28,11 @@ class TransactionService:
         return self.transactionRepo.getList(params)
 
     def createTransaction(self, payload: dict) -> Transaction:
+        # Step 0: Validate Campaign
+        campaign = self.campaignService.getById(payload.get("campaign_id"))
+        if campaign is None or campaign.status != CampaignStatus.IN_PROGRESS:
+            raise ValueError("Campaign is not in progress")
+
         # Step 1: Create in DB
         tx = self.createNewTransaction(payload)
 
@@ -36,8 +43,12 @@ class TransactionService:
         if tx.status != TransactionStatus.SUCCESS:
             return tx
 
-            # Step 3: Commit blockchain
+        # Step 3: Commit blockchain
         tx = self.commitOnChain(tx)
+
+        # Step 4: Commit campaign
+        campaign.current_amount = campaign.current_amount + tx.amount
+        self.campaignService.update(campaign.id, campaign.toDict())
 
         return tx
 
@@ -78,7 +89,7 @@ class TransactionService:
             tx.status = TransactionStatus.FAILED
             print(f"[CORE] Exception during core payment: {e}")
 
-        self.transactionRepo.update(id=tx.id, payload=tx.viewDict())
+        self.transactionRepo.update(id=tx.id, payload=tx.toDict())
         return tx
 
     def commitOnChain(self, tx: Transaction):
@@ -107,6 +118,8 @@ class TransactionService:
             print(f"[CHAIN] Commit FAILED for tx {tx.id}: {e}")
 
         self.transactionRepo.update(
-            id=tx.id, payload=tx.viewDict()
+            id=tx.id, payload=tx.toDict()
         )
+        print(f"[CHAIN] Successfully commit transaction")
+
         return tx
