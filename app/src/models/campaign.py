@@ -29,18 +29,10 @@ class Campaign:
     def toDict(self):
         allowed = [
             "id",
-            "title",
             "org_id",
-            "description",
-            "goal_amount",
             "current_amount",
-            "start_date",
             "end_date",
-            "status",
-            "media_url",
-            "created_at",
-            "updated_at",
-            "deleted_at",
+            "status"
         ]
 
         return {k: getattr(self, k) for k in allowed}
