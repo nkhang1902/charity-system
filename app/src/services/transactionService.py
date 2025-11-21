@@ -33,6 +33,7 @@ class TransactionService:
         campaign = self.campaignService.getById(payload.get("campaign_id"))
         if campaign is None or campaign.status != CampaignStatus.IN_PROGRESS:
             raise ValueError("Campaign is not in progress")
+        print(f"[CAMPAIGN] Get campaign successfully with {campaign}")
 
         # Step 1: Create in DB
         tx = self.createNewTransaction(payload)
@@ -50,6 +51,7 @@ class TransactionService:
 
         # Step 4: Commit campaign
         campaign.current_amount = campaign.current_amount + tx.amount
+        print(f"[CAMPAIGN] Started to update campaign successfully with new amount {campaign.current_amount}")
         self.campaignService.update(campaign.id, {
             "current_amount": campaign.current_amount})
         print(f"[CAMPAIGN] update campaign successfully with {tx.campaign_id}")
