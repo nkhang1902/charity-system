@@ -167,9 +167,8 @@ class CampaignRepository:
             WHERE id = %s AND deleted_at IS NULL
         """
 
-        result = self.db.executeQuery(query, tuple(values))
-        return self.getById(result["lastrowid"])
-
+        self.db.executeQuery(query, tuple(values))
+        return self.getById(id)
 
     def delete(self,id: str):
         query = """
