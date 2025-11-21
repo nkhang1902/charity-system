@@ -10,12 +10,12 @@ class TransactionRepository:
 
     @staticmethod
     def map_campaign(r):
-        if r["campaign_id"] is None:
+        if r.get("campaign_id") is None:
             return None
 
         return Campaign(
             id=r.get("campaign_id"),
-            title=r.get("campaign_title"),
+            title=r.get("campaign_title") or "",
             description=r.get("campaign_description"),
             goal_amount=r.get("campaign_goal_amount"),
             current_amount=r.get("campaign_current_amount"),
