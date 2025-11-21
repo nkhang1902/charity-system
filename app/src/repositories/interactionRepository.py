@@ -5,6 +5,14 @@ class InteractionRepository:
     def __init__(self, db: MySQL):
         self.db = db
 
+    def getByUserId(self, id: int, target_type: str):
+        query = """
+            SELECT *
+            FROM user_interactions
+            WHERE user_id = %s AND target_type = %s
+        """
+        return self.db.executeQuery(query, (id, target_type))
+
     def create(self, payload: dict):
         columns = ", ".join(payload.keys())
         placeholders = ", ".join(["%s"] * len(payload))

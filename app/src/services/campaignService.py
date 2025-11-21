@@ -1,11 +1,13 @@
 from app.src.repositories.campaignRepository import CampaignRepository
 from app.src.models.campaign import Campaign, CampaignQueryParams
+from app.src.services.interactionService import InteractionService
 from app.src.constants.userInteraction import TargetType
 from app.src.jobs.writeEmbedding import write_embedding
 
 class CampaignService:
-    def __init__(self, campaignRepository: CampaignRepository):
+    def __init__(self, campaignRepository: CampaignRepository, interactionService: InteractionService):
         self.campaignRepo = campaignRepository
+        self.interactionService = interactionService
 
     def getById(self, id: str) -> Campaign | None:
         return self.campaignRepo.getById(id)
@@ -43,7 +45,8 @@ class CampaignService:
         })
         return data
 
-    def getRecommendedCampaigns(self, user_id: str, params: CampaignQueryParams):
-        campaigns = self.getList(params)
-        campaign_dicts = [item.viewDict() for item in campaigns]
-        return campaigns
+    def getRecommendedCampaigns(self, user_id, k, params: CampaignQueryParams | None = None) -> list[Campaign]:
+        user_embedding = self.interactionService.compute_user_embedding(int(user_id), TargetType.CAMPAIGN)
+        recommendations = self.interactionService.get_top_k_recommendations(user_embedding, k)
+        ids = [r["target_id"] for r in recommendations]
+        return self.campaignRepo.getList(params, ids)

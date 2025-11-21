@@ -7,7 +7,7 @@ class CampaignRepository:
     def __init__(self, db: MySQL):
         self.db = db
 
-    def getList(self, params: CampaignQueryParams | None = None) -> list[dict]:
+    def getList(self, params: CampaignQueryParams | None = None, ids: list[str] | None = None) -> list[dict]:
         query = """
                 SELECT c.*,
                        o.id            AS org_id,
@@ -45,6 +45,11 @@ class CampaignRepository:
                 placeholders = ", ".join(["%s"] * len(params.status))
                 conditions.append(f"c.status IN ({placeholders})")
                 values.extend(params.status)
+
+        if ids:
+            placeholders = ", ".join(["%s"] * len(ids))
+            conditions.append(f"c.id IN ({placeholders})")
+            values.extend(ids)
 
         if conditions:
             query += " AND " + " AND ".join(conditions)
@@ -114,6 +119,28 @@ class CampaignRepository:
         )
 
         return camp
+
+    def getByIds(self, ids: list[str]):
+        query = """
+                SELECT c.*,
+                       o.id            AS org_id,
+                       o.name          AS org_name,
+                       o.description   AS org_description,
+                       o.logo_url      AS org_logo_url,
+                       o.website_url   AS org_website_url,
+                       o.contact_email AS org_contact_email,
+                       o.category      AS org_category,
+                       o.rating        AS org_rating,
+                       o.vote_count    AS org_vote_count
+                FROM campaigns c
+                         LEFT JOIN organizations o ON o.id = c.org_id
+                WHERE c.id IN (%s)
+                  AND c.deleted_at IS NULL
+                """
+
+        placeholders = ", ".join(["%s"] * len(ids))
+        result = self.db.executeQuery(query, tuple(ids))
+        return result
 
     def create(self, payload: dict):
         columns = ", ".join(payload.keys())
