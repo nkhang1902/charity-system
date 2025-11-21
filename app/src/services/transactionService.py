@@ -51,6 +51,8 @@ class TransactionService:
         campaign.current_amount = campaign.current_amount + tx.amount
         self.campaignService.update(campaign.id, campaign.toDict())
 
+        tx.campaign = campaign
+
         return tx
 
     def createNewTransaction(self, payload: dict) -> Transaction:

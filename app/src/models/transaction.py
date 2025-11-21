@@ -32,7 +32,7 @@ class Transaction:
             "blockchain_hash": self.blockchain_hash,
             "receipt_url": self.receipt_url,
             "user": self.user.__dict__ if self.user else None,
-            "campaign": self.campaign.viewDict() if hasattr(self.campaign, "viewDict") else self.campaign,
+            "campaign": self.campaign.viewDict() if isinstance(self.campaign, Campaign) else None
         }
 
     def toDict(self):
