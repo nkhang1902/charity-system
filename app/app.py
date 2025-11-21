@@ -9,18 +9,22 @@ from app.src.constants.errorCode import API_ERROR_CODE
 from app.src.repositories.organizationRepository import OrganizationRepository
 from app.src.repositories.campaignRepository import CampaignRepository
 from app.src.repositories.transactionRepository import TransactionRepository
+from app.src.repositories.interactionRepository import InteractionRepository
 
 from app.src.services.organizationService import OrganizationService
 from app.src.services.campaignService import CampaignService
 from app.src.services.transactionService import TransactionService
+from app.src.services.interactionService import InteractionService
 
 from app.src.handlers.campaignHandler import CampaignHandler
 from app.src.handlers.organizationHandler import OrganizationHandler
 from app.src.handlers.transactionHandler import TransactionHandler
+from app.src.handlers.interactionHandler import InteractionHandler
 
 from app.src.routers.campaignRouter import CampaignRouter
 from app.src.routers.organizationRouter import OrganizationRouter
 from app.src.routers.transactionRouter import TransactionRouter
+from app.src.routers.interactionRouter import InteractionRouter
 
 app = Flask(__name__)
 
@@ -44,6 +48,12 @@ organizationRouter = OrganizationRouter(organizationHandler)
 campaignRouter = CampaignRouter(campaignHandler)
 transactionRouter = TransactionRouter(transactionHandler)
 
+interactionRepository = InteractionRepository(db)
+interactionService = InteractionService(interactionRepository)
+
+interactionHandler = InteractionHandler(interactionService)
+interactionRouter = InteractionRouter(interactionHandler)
+
 app.register_blueprint(
     organizationRouter.getRouter(),
     url_prefix="/organizations"
@@ -59,6 +69,10 @@ app.register_blueprint(
     url_prefix="/transactions"
 )
 
+app.register_blueprint(
+    interactionRouter.getRouter(),
+    url_prefix="/interactions"
+)
 # @app.before_request
 # def applyMiddlewares():
 #     path = request.path
