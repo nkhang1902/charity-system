@@ -3,6 +3,7 @@ from app.src.models.campaign import Campaign, CampaignQueryParams
 from app.src.services.interactionService import InteractionService
 from app.src.constants.userInteraction import TargetType
 from app.src.jobs.writeEmbedding import write_embedding
+from app.src.jobs.writeEmbedding import get_all_embedding_from_dynamodb
 
 class CampaignService:
     def __init__(self, campaignRepository: CampaignRepository, interactionService: InteractionService):
@@ -46,7 +47,10 @@ class CampaignService:
         return data
 
     def getRecommendedCampaigns(self, user_id, k, params: CampaignQueryParams | None = None) -> list[Campaign]:
-        user_embedding = self.interactionService.compute_user_embedding(int(user_id), TargetType.CAMPAIGN)
+        target_embeddings = get_all_embedding_from_dynamodb(TargetType.CAMPAIGN)
+        print("target_embeddings", target_embeddings[0])
+        user_embedding = self.interactionService.compute_user_embedding(int(user_id), TargetType.CAMPAIGN, target_embeddings)
+        print("user_embedding", user_embedding)
         recommendations = self.interactionService.get_top_k_recommendations(user_embedding, k)
         ids = [r["target_id"] for r in recommendations]
         return self.campaignRepo.getList(params, ids)

@@ -111,6 +111,13 @@ functions:
       - httpApi:
           method: GET
           path: /campaigns
+  
+  createTransaction:
+    handler: app/wsgi_handler.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /transactions
 
   fallback:
     handler: app/wsgi_handler.handler

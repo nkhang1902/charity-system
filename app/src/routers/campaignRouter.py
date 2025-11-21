@@ -42,7 +42,7 @@ class CampaignRouter:
             "/recommendations",
             methods=["GET"],
             endpoint="get_recommended_campaigns"
-        )(lambda campaignId: self.handler.getRecommendedCampaigns(campaignId))
+        )(lambda: self.handler.getRecommendedCampaigns())
 
     def getRouter(self):
         return self.router

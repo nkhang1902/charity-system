@@ -1,10 +1,9 @@
 import os
 import json
 import boto3
-import requests
+import numpy as np
 from decimal import Decimal
-import socket
-print("DNS:", socket.gethostbyname("bedrock-runtime.ap-southeast-2.amazonaws.com"))
+from boto3.dynamodb.conditions import Attr
 
 # DynamoDB table to store embeddings
 dynamodb = boto3.resource("dynamodb", region_name="ap-southeast-2")
@@ -111,14 +110,36 @@ def get_embedding(text: str) -> list[float]:
         raise Exception("No embedding in Bedrock response: " + json.dumps(resp_body))
     return embedding
 
-def get_all_embedding_from_dynamodb():
+def get_all_embedding_from_dynamodb(entity_type):
     try:
-        response = table.get_item(
-            Key={
-                "target_id": "organization_1"
-            }
-        )
-        return response["Item"]["embedding"]
+         # Scan DynamoDB
+        scan_kwargs = {}
+        if entity_type:
+            scan_kwargs["FilterExpression"] = Attr("entity_type").eq(entity_type)
+
+        response = table.scan(**scan_kwargs)
+        items = response.get("Items", [])
+
+        result = []
+
+        for item in items:
+            print(item)
+            result.append({
+                "target_id": item["target_id"],
+                "embedding": [to_float(v) for v in item["embedding"]],
+            })
+
+        return result
     except Exception as e:
         print(f"Failed to get embedding from DynamoDB: {e}")
         return None
+
+def to_float(x):
+    # Decimal → float
+    if isinstance(x, Decimal):
+        return float(x)
+    # {"N": "..."} → float
+    if isinstance(x, dict) and "N" in x:
+        return float(x["N"])
+    # Already float / int
+    return float(x)

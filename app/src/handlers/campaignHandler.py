@@ -69,9 +69,10 @@ class CampaignHandler:
         return make_response({"success": True}, 200)
 
     @handle_api_exceptions
-    def getRecommendedCampaigns(self, user_id: int):
+    def getRecommendedCampaigns(self):
+        user_id = request.args.get("user_id")
         if not user_id:
-            raise ApiException(API_ERROR_CODE.BAD_REQUEST, 400, "Missing user_id")
+            raise ApiException(API_ERROR_CODE.BAD_REQUEST, 400)
 
         args = request.args
         params = CampaignQueryParams(
@@ -80,7 +81,6 @@ class CampaignHandler:
             org_id=splitArg(args, "org_id"),
             status=splitArg(args, "status"),
         )
-
         data = self.service.getRecommendedCampaigns(args.get("user_id"), args.get("k"), params)
         return make_response({
             "user_id": user_id,
