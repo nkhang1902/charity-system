@@ -65,7 +65,7 @@ class CampaignRepository:
         """
 
         result = self.db.executeQuery(query, tuple(values))
-        return result
+        return self.getById(result["lastrowid"])
 
 
     def update(self, id: str, payload: dict):
@@ -80,7 +80,7 @@ class CampaignRepository:
         """
 
         result = self.db.executeQuery(query, tuple(values))
-        return result
+        return self.getById(result["lastrowid"])
 
 
     def delete(self,id: str):
@@ -90,4 +90,4 @@ class CampaignRepository:
             WHERE id = %s AND deleted_at IS NULL
         """
         result = self.db.executeQuery(query, (id,))
-        return result
+        return self.getById(result["lastrowid"])

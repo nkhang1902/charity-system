@@ -60,7 +60,7 @@ class OrganizationRepository:
         """
 
         result = self.db.executeQuery(query, tuple(values))
-        return result
+        return self.getById(result["lastrowid"])
 
 
     def update(self, id: str, payload: dict):
@@ -75,7 +75,7 @@ class OrganizationRepository:
         """
 
         result = self.db.executeQuery(query, tuple(values))
-        return result
+        return self.getById(result["lastrowid"])
 
 
     def delete(self,id: str):
@@ -85,4 +85,4 @@ class OrganizationRepository:
             WHERE id = %s AND deleted_at IS NULL
         """
         result = self.db.executeQuery(query, (id))
-        return result
+        return self.getById(result["lastrowid"])

@@ -22,17 +22,25 @@ provider:
       - subnet-0b88c11b0ced6ee2d
       - subnet-0b39cd55cc70bdcff
 
-  # iam:
-  #   role:
-  #     statements:
-  #       - Effect: Allow
-  #         Action:
-  #           - s3:GetObject
-  #           - s3:PutObject
-  #           - s3:ListBucket
-  #         Resource:
-  #           - arn:aws:s3:::${env:S3_BUCKET_NAME}
-  #           - arn:aws:s3:::${env:S3_BUCKET_NAME}/*
+  iam:
+    role:
+      statements:
+        # S3 permissions
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::${env:S3_BUCKET_NAME}
+            - arn:aws:s3:::${env:S3_BUCKET_NAME}/*
+
+        # EventBridge publish permissions
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource:
+            - arn:aws:events:${self:provider.region}:${aws:accountId}:event-bus/default
 
   environment:
     S3_BUCKET_NAME: ${env:S3_BUCKET_NAME}
@@ -47,6 +55,8 @@ provider:
     PRIVATE_KEY: ${env:PRIVATE_KEY}
     CONTRACT_ADDRESS: ${env:CONTRACT_ADDRESS}
     MODEL_SERVICE_URL: ${env:MODEL_SERVICE_URL}
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
 
 custom:
   wsgi:
@@ -88,3 +98,14 @@ functions:
       - httpApi:
           method: ANY
           path: /{proxy+}
+
+  embeddingHandler:
+    handler: app/src/jobs/writeEmbedding.lambda_handler
+    events:
+      - eventBridge:
+          eventBus: default
+          pattern:
+            source:
+              - "myapp.data"
+            detail-type:
+              - "EntityChanged"

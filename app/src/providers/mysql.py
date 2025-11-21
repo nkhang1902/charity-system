@@ -25,17 +25,24 @@ class MySQL:
         if self.connection is None or not self.connection.is_connected():
             self._connect()
 
-    def executeQuery(self, query: str, params: tuple = None):
+    def executeQuery(self, query: str, params: tuple = None, fetch: bool = True):
         try:
             self._ensure_connection()
             cursor = self.connection.cursor(dictionary=True)
             cursor.execute(query, params)
-            result = cursor.fetchall()
+
+            if query.strip().upper().startswith("SELECT") and fetch:
+                result = cursor.fetchall()
+            else:
+                self.connection.commit()  # for INSERT/UPDATE/DELETE
+                result = {"lastrowid": cursor.lastrowid, "rowcount": cursor.rowcount}
+
             cursor.close()
             return result
         except Exception as e:
             print(f"[MySQL] Query error: {str(e)}")
             raise e
+
 
     def close(self):
         if self.connection and self.connection.is_connected():
