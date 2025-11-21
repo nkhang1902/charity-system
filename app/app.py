@@ -31,11 +31,17 @@ app = Flask(__name__)
 s3 = S3()
 db = MySQL()
 
+interactionRepository = InteractionRepository(db)
+interactionService = InteractionService(interactionRepository)
+
+interactionHandler = InteractionHandler(interactionService)
+interactionRouter = InteractionRouter(interactionHandler)
+
 organizationRepository = OrganizationRepository(db)
 organizationService = OrganizationService(organizationRepository)
 
 campaignRepository = CampaignRepository(db)
-campaignService = CampaignService(campaignRepository)
+campaignService = CampaignService(campaignRepository, interactionService)
 
 transactionRepository = TransactionRepository(db)
 transactionService = TransactionService(transactionRepository, campaignService)
@@ -48,11 +54,7 @@ organizationRouter = OrganizationRouter(organizationHandler)
 campaignRouter = CampaignRouter(campaignHandler)
 transactionRouter = TransactionRouter(transactionHandler)
 
-interactionRepository = InteractionRepository(db)
-interactionService = InteractionService(interactionRepository)
 
-interactionHandler = InteractionHandler(interactionService)
-interactionRouter = InteractionRouter(interactionHandler)
 
 app.register_blueprint(
     organizationRouter.getRouter(),
