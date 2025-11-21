@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import os
 from app.src.constants.campaignStatus import CampaignStatus
 
+
 class TransactionService:
     def __init__(self, transactionRepository: TransactionRepository, campaignService: CampaignService):
         load_dotenv()
@@ -49,7 +50,9 @@ class TransactionService:
 
         # Step 4: Commit campaign
         campaign.current_amount = campaign.current_amount + tx.amount
-        self.campaignService.update(campaign.id, campaign.toDict())
+        self.campaignService.update(campaign.id, {
+            "current_amount": campaign.current_amount})
+        print(f"[CAMPAIGN] update campaign successfully with {tx.campaign_id}")
 
         tx.campaign = campaign
 
