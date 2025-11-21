@@ -8,13 +8,45 @@ class TransactionRepository:
     def __init__(self, db: MySQL):
         self.db = db
 
+    @staticmethod
+    def map_campaign(r):
+        if r["campaign_id"] is None:
+            return None
+
+        return Campaign(
+            id=r.get("campaign_id"),
+            title=r.get("campaign_title"),
+            description=r.get("campaign_description"),
+            goal_amount=r.get("campaign_goal_amount"),
+            current_amount=r.get("campaign_current_amount"),
+            start_date=r.get("campaign_start_date"),
+            end_date=r.get("campaign_end_date"),
+            status=r.get("campaign_status"),
+            media_url=r.get("campaign_media_url"),
+            org_id=r.get("campaign_org_id"),
+            created_at=r.get("campaign_created_at"),
+            updated_at=None,
+            deleted_at=None,
+            organization=None
+        )
+
     def getList(self, params: TransactionQueryParams | None = None) -> list[Transaction]:
         query = """
                 SELECT t.*,
-                       u.name        AS user_name,
-                       u.avatar_url  AS user_avatar_url,
-                       c.title       AS campaign_title,
-                       c.description AS campaign_description
+                   u.id          AS user_id,
+                   u.name        AS user_name,
+                   u.avatar_url  AS user_avatar_url,
+                   c.id          AS campaign_id,
+                   c.title       AS campaign_title,
+                   c.description AS campaign_description,
+                   c.goal_amount AS campaign_goal_amount,
+                   c.current_amount AS campaign_current_amount,
+                   c.start_date AS campaign_start_date,
+                   c.end_date AS campaign_end_date,
+                   c.media_url AS campaign_media_url,
+                   c.status AS campaign_status,
+                   c.org_id AS campaign_org_id,
+                   c.created_at AS campaign_created_at
                 FROM transactions t
                          LEFT JOIN users u ON u.id = t.user_id
                          LEFT JOIN campaigns c ON c.id = t.campaign_id
@@ -63,7 +95,7 @@ class TransactionRepository:
 
         result = []
         for r in rows:
-            tx_fields = {k: r[k] for k in Transaction.__annotations__ if k in r}
+            tx_fields = {k: r.get(k) for k in Transaction.__annotations__}
             tx = Transaction(**tx_fields)
 
             tx.user = User(
@@ -72,12 +104,7 @@ class TransactionRepository:
                 avatar_url=r["user_avatar_url"]
             )
 
-            tx.campaign = Campaign(
-                id=r["campaign_id"],
-                title=r["campaign_title"],
-                description=r["campaign_description"],
-                org_id=None
-            )
+            tx.campaign = self.map_campaign(r)
 
             result.append(tx)
 
@@ -85,13 +112,21 @@ class TransactionRepository:
 
     def getById(self, id: str):
         query = """
-                SELECT t.*, \
-                       u.id          AS user_id, \
-                       u.name        AS user_name, \
-                       u.avatar_url  AS user_avatar_url, \
-                       c.id          AS campaign_id, \
-                       c.title       AS campaign_title, \
-                       c.description AS campaign_description
+                SELECT t.*,
+                   u.id          AS user_id,
+                   u.name        AS user_name,
+                   u.avatar_url  AS user_avatar_url,
+                   c.id          AS campaign_id,
+                   c.title       AS campaign_title,
+                   c.description AS campaign_description,
+                   c.goal_amount AS campaign_goal_amount,
+                   c.current_amount AS campaign_current_amount,
+                   c.start_date AS campaign_start_date,
+                   c.end_date AS campaign_end_date,
+                   c.media_url AS campaign_media_url,
+                   c.status AS campaign_status,
+                   c.org_id AS campaign_org_id,
+                   c.created_at AS campaign_created_at
                 FROM transactions t
                          LEFT JOIN users u ON u.id = t.user_id
                          LEFT JOIN campaigns c ON c.id = t.campaign_id
@@ -113,12 +148,7 @@ class TransactionRepository:
             avatar_url=r["user_avatar_url"]
         )
 
-        tx.campaign = Campaign(
-            id=r["campaign_id"],
-            title=r["campaign_title"],
-            description=r["campaign_description"],
-            org_id=None
-        )
+        tx.campaign = self.map_campaign(r)
 
         return tx
 
