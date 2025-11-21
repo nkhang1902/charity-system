@@ -155,6 +155,39 @@ INSERT INTO campaigns (org_id, title, description, goal_amount, current_amount, 
 (10, 'Community Food Drive', 'Feeding 1,000 families in need.', 16000, 6000, '2025-02-15', '2025-07-15', 'active', 'https://example.com/c19.jpg'),
 (10, 'Affordable Housing Fund', 'Supporting housing repairs for low-income families.', 30000, 15000, '2025-03-10', '2025-09-10', 'active', 'https://example.com/c20.jpg');
 
+-- CAMPAIGNS (50 sample rows)
+INSERT INTO campaigns (org_id, title, description, goal_amount, current_amount, start_date, end_date, status, media_url) VALUES
+(1, 'STEM Scholarships for Underprivileged Youth', 'Support talented students from low-income families to attend STEM programs.', 50000, 12000, '2025-12-01', '2026-06-30', 'active', 'https://example.com/images/stem_scholarship.jpg'),
+(1, 'After-school Tutoring Program', 'Provide tutoring and mentorship for high school students struggling with math and science.', 30000, 8000, '2025-11-15', '2026-05-15', 'active', 'https://example.com/images/tutoring.jpg'),
+(1, 'EduFuture Digital Library', 'Create an online library of educational resources accessible to all students.', 20000, 5000, '2025-12-10', '2026-06-30', 'active', 'https://example.com/images/digital_library.jpg'),
+(2, 'Tree Planting Campaign', 'Plant 10,000 trees in urban areas to improve air quality.', 40000, 15000, '2025-11-01', '2026-04-30', 'active', 'https://example.com/images/tree_planting.jpg'),
+(2, 'Plastic-Free Cities', 'Promote and support community initiatives to reduce single-use plastics.', 25000, 7000, '2025-12-01', '2026-06-30', 'active', 'https://example.com/images/plastic_free.jpg'),
+(2, 'Community Garden Program', 'Build community gardens in neighborhoods to increase green spaces.', 30000, 10000, '2025-12-15', '2026-07-31', 'active', 'https://example.com/images/community_garden.jpg'),
+(3, 'Mobile Health Clinics', 'Deploy mobile clinics to underserved rural areas for basic health services.', 60000, 20000, '2025-11-05', '2026-06-30', 'active', 'https://example.com/images/mobile_clinic.jpg'),
+(3, 'Vaccination Drive', 'Organize community vaccination campaigns for children and elderly.', 40000, 15000, '2025-11-10', '2026-05-31', 'active', 'https://example.com/images/vaccine_drive.jpg'),
+(3, 'Health Awareness Workshops', 'Educate communities on nutrition, hygiene, and preventive healthcare.', 20000, 8000, '2025-12-01', '2026-04-30', 'active', 'https://example.com/images/health_workshops.jpg'),
+(4, 'Coding Bootcamp for Kids', 'Teach programming and robotics to children aged 8-15.', 35000, 12000, '2025-11-20', '2026-05-31', 'active', 'https://example.com/images/coding_bootcamp.jpg'),
+(4, 'Tech for Girls', 'Encourage girls to participate in technology workshops and competitions.', 30000, 10000, '2025-12-01', '2026-06-30', 'active', 'https://example.com/images/tech_for_girls.jpg'),
+(4, 'Robotics Club Expansion', 'Provide resources and kits to expand school robotics clubs.', 25000, 8000, '2025-11-25', '2026-05-15', 'active', 'https://example.com/images/robotics_club.jpg'),
+(5, 'Clean Water Wells', 'Build and maintain clean water wells in villages.', 50000, 18000, '2025-11-01', '2026-07-31', 'active', 'https://example.com/images/wells.jpg'),
+(5, 'Water Filtration Kits', 'Distribute household water filtration kits to prevent waterborne diseases.', 20000, 7000, '2025-11-15', '2026-06-30', 'active', 'https://example.com/images/filters.jpg'),
+(5, 'Hygiene Education Program', 'Educate communities on proper hygiene and sanitation practices.', 15000, 5000, '2025-12-01', '2026-04-30', 'active', 'https://example.com/images/hygiene.jpg'),
+(6, 'Animal Shelter Renovation', 'Upgrade facilities to provide better care for rescued animals.', 40000, 12000, '2025-11-05', '2026-06-30', 'active', 'https://example.com/images/shelter.jpg'),
+(6, 'Pet Adoption Campaign', 'Promote adoption of abandoned pets through community events.', 15000, 5000, '2025-12-01', '2026-05-31', 'active', 'https://example.com/images/adoption.jpg'),
+(6, 'Wildlife Rescue Training', 'Train volunteers in animal rescue and rehabilitation techniques.', 20000, 7000, '2025-11-20', '2026-06-30', 'active', 'https://example.com/images/wildlife_training.jpg'),
+(7, 'Women Empowerment Workshops', 'Organize workshops on skill development and entrepreneurship for women.', 30000, 10000, '2025-11-15', '2026-05-15', 'active', 'https://example.com/images/women_workshops.jpg'),
+(7, 'Microfinance Program', 'Provide small loans to women to start businesses.', 50000, 20000, '2025-12-01', '2026-06-30', 'active', 'https://example.com/images/microfinance.jpg'),
+(7, 'Career Mentorship', 'Pair professional women mentors with young women seeking career guidance.', 25000, 8000, '2025-12-10', '2026-06-30', 'active', 'https://example.com/images/mentorship.jpg'),
+(8, 'Youth Soccer League', 'Organize community soccer tournaments for youth engagement.', 20000, 7000, '2025-11-01', '2026-05-31', 'active', 'https://example.com/images/soccer.jpg'),
+(8, 'Basketball Skills Camp', 'Provide training and development camps for young athletes.', 15000, 5000, '2025-11-20', '2026-04-30', 'active', 'https://example.com/images/basketball.jpg'),
+(8, 'Mentorship for Young Athletes', 'Connect youth with experienced sports mentors.', 10000, 3000, '2025-12-01', '2026-06-30', 'active', 'https://example.com/images/mentorship_sports.jpg'),
+(9, 'Senior Care Home Upgrade', 'Improve facilities and services for elderly residents.', 40000, 15000, '2025-11-01', '2026-06-30', 'active', 'https://example.com/images/senior_home.jpg'),
+(9, 'Home Care Assistance', 'Provide home care support and regular checkups for seniors.', 25000, 8000, '2025-11-15', '2026-05-15', 'active', 'https://example.com/images/home_care.jpg'),
+(9, 'Senior Nutrition Program', 'Deliver meals and nutrition guidance for elderly residents.', 15000, 5000, '2025-12-01', '2026-04-30', 'active', 'https://example.com/images/nutrition.jpg'),
+(10, 'Community Builders Fund', 'Support local initiatives to improve neighborhood infrastructure.', 50000, 20000, '2025-11-01', '2026-07-31', 'active', 'https://example.com/images/community_fund.jpg'),
+(10, 'Local Arts Festival', 'Fund a community arts festival to promote cultural engagement.', 30000, 10000, '2025-11-15', '2026-05-15', 'active', 'https://example.com/images/arts_festival.jpg'),
+(10, 'Neighborhood Cleanup Drive', 'Organize cleanups and environmental awareness events.', 20000, 7000, '2025-12-01', '2026-06-30', 'active', 'https://example.com/images/cleanup.jpg');
+
 -- USER INTERACTIONS
 DELETE FROM user_interactions;
 INSERT INTO user_interactions (user_id, target_type, target_id, action_type, weight) VALUES

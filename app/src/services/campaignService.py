@@ -54,7 +54,7 @@ class CampaignService:
             target_emb_dict = {item["target_id"]: item["embedding"] for item in target_embeddings}
             recommendations = self.interactionService.get_top_k_recommendations(user_embedding, target_emb_dict, int(k))
             ids = [r["target_id"].split("_")[1] for r in recommendations]
-            print("recommendations", recommendations)
+            print("recommendations", ids)
             return self.campaignRepo.getList(params, ids)
         else:
             return self.campaignRepo.getList(params)
