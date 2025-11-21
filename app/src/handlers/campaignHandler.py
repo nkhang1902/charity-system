@@ -81,7 +81,9 @@ class CampaignHandler:
             org_id=splitArg(args, "org_id"),
             status=splitArg(args, "status"),
         )
-        data = self.service.getRecommendedCampaigns(args.get("user_id"), args.get("k"), args.get("offset"), params)
+        k = int(args.get("k"))
+        offset = int(args.get("offset"))
+        data = self.service.getRecommendedCampaigns(user_id, k, offset, params)
         return make_response({
             "user_id": user_id,
             "recommendations": data
