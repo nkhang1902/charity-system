@@ -49,13 +49,16 @@ class InteractionService:
         return [x / total_weight for x in weighted_sum]
 
 
-    def get_top_k_recommendations(self,user_embedding, target_embeddings, top_k=5):
+    def get_top_k_recommendations(self, user_embedding, target_embeddings, top_k, offset=0):
         """
         user_embedding: list[float]
         target_embeddings: dict { target_id: list[float] }
+        top_k: number of results to return
+        offset: number of top results to skip
         """
         scores = []
 
+        # compute similarity
         for tid, vec in target_embeddings.items():
             sim = cosine_similarity(user_embedding, vec)
             scores.append((tid, sim))
@@ -63,11 +66,11 @@ class InteractionService:
         # sort by similarity descending
         scores.sort(key=lambda x: x[1], reverse=True)
 
-        # return top k results
-        return [
-            {"target_id": tid, "score": score}
-            for tid, score in scores[:top_k]
-        ]
+        # apply offset and top_k
+        sliced = scores[offset:offset + top_k]
+
+        return [{"target_id": tid, "score": score} for tid, score in sliced]
+
 
 import math
 

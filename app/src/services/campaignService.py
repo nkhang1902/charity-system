@@ -46,13 +46,13 @@ class CampaignService:
         })
         return data
 
-    def getRecommendedCampaigns(self, user_id, k, params: CampaignQueryParams | None = None) -> list[Campaign]:
+    def getRecommendedCampaigns(self, user_id, k, offset, params: CampaignQueryParams | None = None) -> list[Campaign]:
         target_embeddings = get_all_embedding_from_dynamodb(TargetType.CAMPAIGN)
         user_embedding = self.interactionService.compute_user_embedding(int(user_id), TargetType.CAMPAIGN, target_embeddings)
         print("user_embedding", user_embedding)
         if user_embedding != None:
             target_emb_dict = {item["target_id"]: item["embedding"] for item in target_embeddings}
-            recommendations = self.interactionService.get_top_k_recommendations(user_embedding, target_emb_dict, int(k))
+            recommendations = self.interactionService.get_top_k_recommendations(user_embedding, target_emb_dict, int(k), int(offset))
             ids = [r["target_id"].split("_")[1] for r in recommendations]
             print("recommendations", ids)
             return self.campaignRepo.getList(params, ids)
