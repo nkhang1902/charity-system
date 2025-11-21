@@ -14,17 +14,24 @@ provider:
   layers:
     - arn:aws:lambda:ap-southeast-2:539247469538:layer:DependencyLayer:7
 
-  vpc:
-    securityGroupIds:
-      - sg-00f218b4fb5bfdd4c
-    subnetIds:
-      - subnet-0eb51aec86119b476
-      - subnet-0b88c11b0ced6ee2d
-      - subnet-0b39cd55cc70bdcff
+  # vpc:
+  #   securityGroupIds:
+  #     - sg-00f218b4fb5bfdd4c
+  #   subnetIds:
+  #     - subnet-0eb51aec86119b476
 
   iam:
     role:
       statements:
+        # DynamoDB permissions
+        - Effect: Allow
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:DeleteItem
+            - dynamodb:Scan
+          Resource: arn:aws:dynamodb:ap-southeast-2:539247469538:table/TargetEmbeddings
         # S3 permissions
         - Effect: Allow
           Action:
@@ -34,13 +41,25 @@ provider:
           Resource:
             - arn:aws:s3:::${env:S3_BUCKET_NAME}
             - arn:aws:s3:::${env:S3_BUCKET_NAME}/*
-
         # EventBridge publish permissions
         - Effect: Allow
           Action:
             - events:PutEvents
+            - events:PutEvent
+            - events:DescribeEventBus
+            - events:ListEventBuses
           Resource:
-            - arn:aws:events:${self:provider.region}:${aws:accountId}:event-bus/default
+            - arn:aws:events:ap-southeast-2:539247469538:event-bus/default
+        # Bedrock permissions
+        - Effect: Allow
+          Action:
+            - bedrock:InvokeModel
+            - bedrock:InvokeModelWithResponseStream
+          Resource: "arn:aws:bedrock:ap-southeast-2::foundation-model/*"
+        - Effect: Allow
+          Action:
+            - bedrock-runtime:InvokeModel
+          Resource: "arn:aws:bedrock-runtime:ap-southeast-2::foundation-model/*"
 
   environment:
     S3_BUCKET_NAME: ${env:S3_BUCKET_NAME}
@@ -58,6 +77,7 @@ provider:
     MODEL_SERVICE_URL: ${env:MODEL_SERVICE_URL}
     DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
     OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    BEDROCK_EMBED_MODEL_ID: ${env:BEDROCK_EMBED_MODEL_ID}
 
 custom:
   wsgi:
@@ -100,13 +120,13 @@ functions:
           method: ANY
           path: /{proxy+}
 
-  embeddingHandler:
-    handler: app/src/jobs/writeEmbedding.lambda_handler
-    events:
-      - eventBridge:
-          eventBus: default
-          pattern:
-            source:
-              - "myapp.data"
-            detail-type:
-              - "EntityChanged"
+  # embeddingHandler:
+  #   handler: app/src/jobs/writeEmbedding.write_embedding
+  #   events:
+  #     - eventBridge:
+  #         eventBus: default
+  #         pattern:
+  #           source:
+  #             - "myapp.data"
+  #           detail-type:
+  #             - "EntityChanged"

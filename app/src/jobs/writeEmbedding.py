@@ -3,14 +3,17 @@ import json
 import boto3
 import requests
 from decimal import Decimal
+import socket
+print("DNS:", socket.gethostbyname("bedrock-runtime.ap-southeast-2.amazonaws.com"))
 
 # DynamoDB table to store embeddings
-dynamodb = boto3.resource("dynamodb")
+dynamodb = boto3.resource("dynamodb", region_name="ap-southeast-2")
 table = dynamodb.Table(os.environ.get("DYNAMODB_TABLE"))
+# Initialize Bedrock runtime client
+bedrock = boto3.client("bedrock-runtime", region_name="ap-southeast-2")
+MODEL_ID = os.getenv("BEDROCK_EMBED_MODEL_ID", "amazon.titan-embed-text-v2:0")
 
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-
-def lambda_handler(event, context):
+def write_embedding(detail, context):
     """
     EventBridge event handler for embedding management.
     Event schema:
@@ -25,15 +28,15 @@ def lambda_handler(event, context):
         }
     }
     """
-    print("Received event:", json.dumps(event))
+    print("Received event:", json.dumps(detail))
 
-    detail = event.get("detail", {})
+    # detail = event.get("detail", {})
     entity_type = detail.get("entityType")
     entity_id = detail.get("id")
     data = detail.get("data", {})
     is_deleted = detail.get("isDeleted", False)
 
-    if not entity_type or not entity_id or not data:
+    if not entity_type or not entity_id:
         print("Invalid event, missing entityType or id or data")
         return
 
@@ -45,30 +48,30 @@ def lambda_handler(event, context):
         except Exception as e:
             print(f"Failed to delete embedding: {e}")
         return
+    else:
+        # Build text for embedding
+        text = build_embedding_text(data)
 
-    # Build text for embedding
-    text = build_embedding_text(entity_type, data)
+        # Compute embedding via OpenAI REST API
+        try:
+            embedding = get_embedding(text)
+        except Exception as e:
+            print(f"Failed to get embedding: {e}")
+            return
 
-    # Compute embedding via OpenAI REST API
-    try:
-        embedding = get_embedding(text)
-    except Exception as e:
-        print(f"Failed to get embedding: {e}")
-        return
-
-    # Store embedding in DynamoDB
-    try:
-        table.put_item(
-            Item={
-                "target_id": f"{entity_type}_{entity_id}",
-                "entity_type": entity_type,
-                "embedding": [Decimal(str(x)) for x in embedding],
-                "source_text": text,
-            }
-        )
-        print(f"Upserted embedding for {entity_type}:{entity_id}")
-    except Exception as e:
-        print(f"Failed to write embedding to DynamoDB: {e}")
+        # Store embedding in DynamoDB
+        try:
+            table.put_item(
+                Item={
+                    "target_id": f"{entity_type}_{entity_id}",
+                    "entity_type": entity_type,
+                    "embedding": [Decimal(str(x)) for x in embedding],
+                    "source_text": text,
+                }
+            )
+            print(f"Upserted embedding for {entity_type}:{entity_id}")
+        except Exception as e:
+            print(f"Failed to write embedding to DynamoDB: {e}")
 
 
 def build_embedding_text(data):
@@ -81,20 +84,30 @@ def build_embedding_text(data):
         parts.append(f"{k}: {str(v)}")
     return " | ".join(parts)
 
-
-
-def get_embedding(text):
-    """Call OpenAI embeddings API via HTTP request"""
-    url = "https://api.openai.com/v1/embeddings"
-    headers = {
-        "Authorization": f"Bearer {OPENAI_API_KEY}",
-        "Content-Type": "application/json",
+def get_embedding(text: str) -> list[float]:
+    """
+    Call Amazon Bedrock to generate embeddings for the given text.
+    Returns the embedding as a list of floats.
+    """
+    # Build the request body
+    body = {
+        "inputText": text
     }
-    payload = {
-        "model": "text-embedding-3-small",
-        "input": text
+    body_json = json.dumps(body)
+
+    # Call Bedrock runtime
+    kwargs = {
+        "modelId": MODEL_ID,
+        "body": body_json,
+        "contentType": "application/json",
+        "accept": "application/json",
     }
-    response = requests.post(url, headers=headers, json=payload)
-    response.raise_for_status()
-    data = response.json()
-    return data["data"][0]["embedding"]
+    resp = bedrock.invoke_model(**kwargs)
+
+    # Parse response
+    resp_body = json.loads(resp["body"].read())
+    embedding = resp_body.get("embedding")
+    if embedding is None:
+        raise Exception("No embedding in Bedrock response: " + json.dumps(resp_body))
+    return embedding
+
