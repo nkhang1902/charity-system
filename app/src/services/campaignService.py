@@ -17,26 +17,26 @@ class CampaignService:
         data = self.campaignRepo.create(payload)
         write_embedding({
             "entityType": "campaign",
-            "id": str(id),
+            "id": str(data.id),
             "isDeleted": False,
             "data":  {"title": data.title, "description": data.description}
-        }, None)
+        })
         return data
 
     def update(self, id: str, payload: dict):
         data = self.campaignRepo.update(id, payload)
         write_embedding({
-            "entityType": "campaign",
+            "entityType": TargetType.CAMPAIGN,
             "id": str(id),
             "isDeleted": False,
             "data":  {"title": data.title, "description": data.description}
-        }, None)
+        })
         return data
 
     def delete(self, id: str):
         data = self.campaignRepo.delete(id)
         write_embedding({
-            "entityType": "campaign",
+            "entityType": TargetType.CAMPAIGN,
             "id": str(id),
             "isDeleted": True,
             "data":  {"title": data.title, "description": data.description}

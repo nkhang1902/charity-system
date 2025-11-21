@@ -13,7 +13,7 @@ table = dynamodb.Table(os.environ.get("DYNAMODB_TABLE"))
 bedrock = boto3.client("bedrock-runtime", region_name="ap-southeast-2")
 MODEL_ID = os.getenv("BEDROCK_EMBED_MODEL_ID", "amazon.titan-embed-text-v2:0")
 
-def write_embedding(detail, context):
+def write_embedding(detail):
     """
     EventBridge event handler for embedding management.
     Event schema:
@@ -111,3 +111,14 @@ def get_embedding(text: str) -> list[float]:
         raise Exception("No embedding in Bedrock response: " + json.dumps(resp_body))
     return embedding
 
+def get_all_embedding_from_dynamodb():
+    try:
+        response = table.get_item(
+            Key={
+                "target_id": "organization_1"
+            }
+        )
+        return response["Item"]["embedding"]
+    except Exception as e:
+        print(f"Failed to get embedding from DynamoDB: {e}")
+        return None
