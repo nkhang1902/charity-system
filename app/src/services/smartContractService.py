@@ -8,23 +8,33 @@ class SmartContractService:
     def __init__(self):
         load_dotenv()
 
-        provider_url = os.getenv("WEB3_PROVIDER_URL", "http://127.0.0.1:8545")
+        provider_url = os.getenv("WEB3_PROVIDER_URL")
         private_key = os.getenv("PRIVATE_KEY")
         contract_address = os.getenv("CONTRACT_ADDRESS")
 
+        if not provider_url:
+            raise ValueError("Missing WEB3_PROVIDER_URL in .env")
+
         if not private_key:
-            raise ValueError("Missing PRIVATE_KEY in environment variables")
+            raise ValueError("Missing PRIVATE_KEY in .env")
 
         if not contract_address:
-            raise ValueError("Missing CONTRACT_ADDRESS in environment variables")
+            raise ValueError("Missing CONTRACT_ADDRESS in .env")
 
+        # Connect Web3
         self.web3 = Web3(Web3.HTTPProvider(provider_url))
         if not self.web3.is_connected():
-            raise ConnectionError(f"Cannot connect to Web3 provider: {provider_url}")
+            raise ConnectionError(f"Cannot connect to RPC: {provider_url}")
 
+        # Wallet signer
         self.account = self.web3.eth.account.from_key(private_key)
+        self.wallet_address = self.account.address
 
-        abi_path = os.path.join(os.path.dirname(__file__), "../resource/artifacts/TransactionLogger.json")
+        # Load ABI
+        abi_path = os.path.join(
+            os.path.dirname(__file__),
+            "../resource/artifacts/TransactionLogger.json"
+        )
         abi_path = os.path.abspath(abi_path)
 
         with open(abi_path, "r") as f:
@@ -35,19 +45,31 @@ class SmartContractService:
             abi=artifact["abi"]
         )
 
-    def commitTransaction(self, commitTx: CommitTransaction):
-        nonce = self.web3.eth.get_transaction_count(self.account.address)
+    def commitTransaction(self, tx: CommitTransaction):
 
-        tx = self.contract.functions.commitTransaction(
-            *commitTx.toSmartContractArgs()
-        ).build_transaction({
-            "from": self.account.address,
-            "nonce": nonce,
-            "gas": 3000000,
-            "gasPrice": self.web3.to_wei("5", "gwei"),
+        # Build function call
+        function_call = self.contract.functions.commitTransaction(
+            tx.user_id,
+            tx.campaign_id,
+            tx.transaction_id,
+            tx.amount,
+            tx.status,
+            tx.message
+        )
+
+        # Build transaction object
+        transaction = function_call.build_transaction({
+            "from": self.wallet_address,
+            "nonce": self.web3.eth.get_transaction_count(self.wallet_address),
+            "gas": 350000,
+            "gasPrice": self.web3.eth.gas_price,
+            "chainId": 11155111  # Sepolia chain ID
         })
 
-        signed_tx = self.account.sign_transaction(tx)
-        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.rawTransaction)
+        # Sign
+        signed_tx = self.web3.eth.account.sign_transaction(transaction, self.account.key)
+
+        # Send
+        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
 
         return self.web3.to_hex(tx_hash)

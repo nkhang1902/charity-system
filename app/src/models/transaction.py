@@ -26,6 +26,9 @@ class Transaction:
             "timestamp": self.timestamp,
         }
 
+    def toDict(self):
+        return self.viewDict()
+
 @dataclass
 class TransactionQueryParams:
     user_id: Optional[list[int]]
