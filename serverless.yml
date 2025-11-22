@@ -89,6 +89,7 @@ package:
   exclude:
     - node_modules/**
     - venv/**
+    - .venv
     - .env
     - tests/**
     - __pycache__/**

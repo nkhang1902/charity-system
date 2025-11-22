@@ -1,14 +1,17 @@
+from app.src.constants.campaignStatus import CampaignStatus
 from app.src.repositories.campaignRepository import CampaignRepository
 from app.src.models.campaign import Campaign, CampaignQueryParams
 from app.src.services.interactionService import InteractionService
 from app.src.constants.userInteraction import TargetType
 from app.src.jobs.writeEmbedding import write_embedding
 from app.src.jobs.writeEmbedding import get_all_embedding_from_dynamodb
+from app.src.services.coreClientSerivce import CoreClientSerivce
 
 class CampaignService:
     def __init__(self, campaignRepository: CampaignRepository, interactionService: InteractionService):
         self.campaignRepo = campaignRepository
         self.interactionService = interactionService
+        self.coreClientService = CoreClientSerivce()
 
     def getById(self, id: str) -> Campaign | None:
         return self.campaignRepo.getById(id)
@@ -17,7 +20,13 @@ class CampaignService:
         return self.campaignRepo.getList(params)
 
     def create(self, payload: dict):
+        # step 1: create new campaign with status draft
+        payload["status"] = CampaignStatus.NEW
         data = self.campaignRepo.create(payload)
+
+        # step 2: request core update status in_progress
+        data = self.processCoreCamapignCreation(data)
+
         write_embedding({
             "entityType": "campaign",
             "id": str(data.id),
@@ -25,6 +34,24 @@ class CampaignService:
             "data":  {"title": data.title, "description": data.description}
         })
         return data
+
+    def processCoreCamapignCreation(self, tx: Campaign):
+        try:
+            result = self.coreClientService.handleCamapignCreation(tx)
+
+            if result.get("success"):
+                tx.status = CampaignStatus.IN_PROGRESS
+                print(f"[CORE] Campaign created successfully for tx {tx.id}")
+            else:
+                tx.status = TransactionStatus.CANCELLED
+                print(f"[CORE] Payment FAILED for tx {tx.id}: {tx.message}")
+
+        except Exception as e:
+            tx.status = TransactionStatus.CANCELLED
+            print(f"[CORE] Exception during core payment: {e}")
+
+        self.campaignRepo.update(id=tx.id, payload=tx.toDict())
+        return tx
 
     def update(self, id: str, payload: dict):
         data = self.campaignRepo.update(id, payload)
