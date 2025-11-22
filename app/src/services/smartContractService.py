@@ -62,7 +62,7 @@ class SmartContractService:
             "from": self.wallet_address,
             "nonce": self.web3.eth.get_transaction_count(self.wallet_address, "pending"),
             "gas": 350000,
-            "gasPrice": Web3.to_wei(40, "gwei"),
+            "gasPrice": Web3.to_wei(80, "gwei"),
             "chainId": 11155111  # Sepolia chain ID
         })
 
