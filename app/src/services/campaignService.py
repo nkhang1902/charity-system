@@ -6,6 +6,7 @@ from app.src.constants.userInteraction import TargetType
 from app.src.jobs.writeEmbedding import write_embedding
 from app.src.jobs.writeEmbedding import get_all_embedding_from_dynamodb
 from app.src.services.coreClientSerivce import CoreClientSerivce
+from datetime import datetime
 
 class CampaignService:
     def __init__(self, campaignRepository: CampaignRepository, interactionService: InteractionService):
@@ -54,6 +55,11 @@ class CampaignService:
         return tx
 
     def update(self, id: str, payload: dict):
+        if payload.get("status") == CampaignStatus.CLOSED:
+            cp = self.campaignRepo.getById(id)
+            today = datetime.now().date()
+            if cp.end_date is None or cp.end_date > today:
+                payload["status"] = CampaignStatus.CANCELLED
         data = self.campaignRepo.update(id, payload)
         write_embedding({
             "entityType": TargetType.CAMPAIGN,
